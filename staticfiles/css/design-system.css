@@ -9,42 +9,46 @@
   /* ========================================================================
      PALETA OFICIAL DO MINISTÉRIO LUZ DA PALAVRA (MLP)
      ======================================================================== */
-  --mlp-gold-light: #F2D16D;    /* Dourado luminoso: destaques, pequenos detalhes e ênfases */
-  --mlp-gold: #BF871F;          /* Ouro envelhecido: links ativos, chamadas secundárias e navegação */
-  --mlp-brown-dark: #8C4303;    /* Marrom profundo: títulos, botões principais, identidade e contraste */
-  --mlp-earth: #A6754B;         /* Terra acolhedora: elementos secundários, bordas, superfícies auxiliares */
-  --mlp-background: #F2F1F0;    /* Cinza-marfim: fundo principal e áreas de leitura */
-  --mlp-surface: #FFFFFF;       /* Superfície branca para cards e leitura nobre */
-  --mlp-text: #30271F;          /* Texto principal em alto contraste */
-  --mlp-text-muted: #6A625A;    /* Cinza documental para textos auxiliares */
-  --mlp-border: #E3DCD4;        /* Bordas finas e divisores editoriais */
+  /* Paleta Oficial do Ministério Luz da Palavra */
+  --color-mlp-gold-light: #F2D16D;    /* Dourado luminoso: destaques, pequenos detalhes e ênfases */
+  --color-mlp-gold: #BF871F;          /* Ouro envelhecido: links ativos, chamadas secundárias e navegação */
+  --color-mlp-brown-dark: #8C4303;    /* Marrom profundo: títulos, botões principais, identidade e contraste */
+  --color-mlp-earth: #A6754B;         /* Terra acolhedora: elementos secundários, bordas, superfícies auxiliares */
+  --color-mlp-background: #F2F1F0;    /* Cinza-marfim: fundo principal e áreas de leitura */
+  --color-mlp-surface: #FFFFFF;       /* Superfície branca para cards e leitura nobre */
+  --color-mlp-text: #30271F;          /* Texto principal em alto contraste */
+  --color-mlp-text-muted: #6A625A;    /* Cinza documental para textos auxiliares */
+  --color-mlp-border: #E3DCD4;        /* Bordas finas e divisores editoriais */
+  --color-mlp-text-on-dark: #F7F2E9; /* Texto claro para fundos escuros */
+  --color-mlp-border-on-dark: rgba(242, 209, 109, 0.18); /* Borda em fundos escuros */
   --mlp-radius-sm: 8px;
   --mlp-radius-md: 14px;
   --mlp-radius-lg: 22px;
   --mlp-content-width: 1280px;
 
   /* Aliases Semânticos / Compatibilidade Institucional */
-  --color-wine: var(--mlp-brown-dark);
+  --color-wine: var(--color-mlp-brown-dark);
   --color-wine-deep: #4E2502;
   --color-wine-darker: #361A02;
   --color-wine-light: #A35005;
   --color-wine-surface: #5D2E04;
 
-  --color-ivory: var(--mlp-background);
+  --color-ivory: var(--color-mlp-background);
   --color-ivory-warm: #FAF8F5;
+  --color-ivory-warm-rgb: 250, 248, 245;
   --color-ivory-dark: #E6DFD7;
-  --color-ivory-border: var(--mlp-border);
+  --color-ivory-border: var(--color-mlp-border);
 
-  --color-gold: var(--mlp-gold);
-  --color-gold-light: var(--mlp-gold-light);
+  --color-gold: var(--color-mlp-gold);
+  --color-gold-light: var(--color-mlp-gold-light);
   --color-gold-hover: #9E6F18;
   --color-gold-tint: rgba(191, 135, 31, 0.12);
   --color-gold-border: rgba(191, 135, 31, 0.32);
 
-  --color-gray-doc: var(--mlp-text-muted);
+  --color-gray-doc: var(--color-mlp-text-muted);
   --color-gray-light: #8E857C;
   --color-gray-subtle: #C2BBB2;
-  --color-white: var(--mlp-surface);
+  --color-white: var(--color-mlp-surface);
 
   /* Estados Editoriais */
   --status-draft: #8E857C;
@@ -82,6 +86,63 @@
   --shadow-subtle: 0 4px 20px rgba(36, 23, 20, 0.05);
   --shadow-card: 0 8px 30px rgba(36, 23, 20, 0.08);
   --shadow-elevated: 0 16px 45px rgba(36, 23, 20, 0.12);
+}
+
+/* ==========================================================================
+   CLASSES UTILITÁRIAS EDITORIAIS (Para limpeza de estilos inline)
+   ========================================================================== */
+
+.bg-ivory-warm {
+  background-color: var(--color-ivory-warm) !important;
+}
+
+.bg-wine-deep {
+  background-color: var(--color-wine-deep) !important;
+  color: var(--color-ivory) !important;
+}
+
+.bg-white {
+  background-color: var(--color-white) !important;
+}
+
+.text-wine {
+  color: var(--color-wine) !important;
+}
+
+.text-gold {
+  color: var(--color-gold) !important;
+}
+
+.text-gold-light {
+  color: var(--color-gold-light) !important;
+}
+
+.text-ivory-warm {
+  color: var(--color-ivory-warm) !important;
+}
+
+.text-muted-editorial {
+  color: var(--color-gray-doc) !important;
+}
+
+.text-gray-subtle {
+  color: var(--color-gray-subtle) !important;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+.mt-2xl {
+  margin-top: var(--space-2xl) !important;
+}
+
+.border-gold-left {
+  border-left: 3px solid var(--color-gold) !important;
+}
+
+.border-ivory {
+  border: 1px solid var(--color-ivory-border) !important;
 }
 
 /* Reset Semântico & Base */
