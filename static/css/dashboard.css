@@ -1,0 +1,305 @@
+/* ==========================================================================
+   MINISTÉRIO LUZ DA PALAVRA — PAINEL ADMINISTRATIVO INSTITUCIONAL
+   Governança editorial, segurança, clareza e respeito ao patrimônio.
+   ========================================================================== */
+
+.dash-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #F4EFE6;
+}
+
+/* Sidebar do Painel */
+.dash-sidebar {
+  width: 270px;
+  background-color: var(--color-wine-deep);
+  color: var(--color-ivory);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  border-right: 1px solid rgba(165, 122, 34, 0.25);
+}
+
+.dash-sidebar-header {
+  padding: 1.5rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dash-sidebar-monogram {
+  width: 36px;
+  height: 36px;
+  background-color: var(--color-gold);
+  color: var(--color-wine-deep);
+  font-family: var(--font-display);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+}
+
+.dash-sidebar-title {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-ivory-warm);
+  line-height: 1.2;
+}
+
+.dash-sidebar-sub {
+  font-size: 0.7rem;
+  color: var(--color-gold-light);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.dash-nav {
+  padding: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.dash-nav-section-title {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-gray-subtle);
+  padding: 0.75rem 1.25rem 0.25rem;
+  font-weight: 600;
+}
+
+.dash-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 1.25rem;
+  color: var(--color-ivory-dark);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: all var(--transition-fast);
+  border-left: 3px solid transparent;
+}
+
+.dash-nav-link:hover,
+.dash-nav-link.active {
+  background-color: rgba(165, 122, 34, 0.15);
+  color: var(--color-white);
+  border-left-color: var(--color-gold);
+}
+
+.dash-nav-icon {
+  width: 18px;
+  height: 18px;
+  opacity: 0.8;
+}
+
+.dash-sidebar-footer {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.78rem;
+  color: var(--color-gray-subtle);
+}
+
+/* Área Principal do Conteúdo */
+.dash-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.dash-topbar {
+  background-color: var(--color-white);
+  border-bottom: 1px solid var(--color-ivory-border);
+  padding: 0.85rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dash-breadcrumbs {
+  font-size: 0.85rem;
+  color: var(--color-gray-doc);
+}
+
+.dash-user-bar {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.dash-user-info {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+
+.dash-user-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-wine);
+}
+
+.dash-user-role {
+  font-size: 0.72rem;
+  color: var(--color-gold);
+  font-weight: 500;
+}
+
+.dash-content {
+  padding: 2rem;
+  flex: 1;
+}
+
+/* Grid de Estatísticas / Métricas Reais */
+.dash-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-ivory-border);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  border-radius: 2px;
+  box-shadow: var(--shadow-subtle);
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-gray-doc);
+  font-weight: 600;
+}
+
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-wine);
+  line-height: 1.1;
+}
+
+.stat-sub {
+  font-size: 0.76rem;
+  color: var(--color-gray-light);
+}
+
+/* Tabelas e Paineis de Lista */
+.dash-card {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-ivory-border);
+  border-radius: 2px;
+  box-shadow: var(--shadow-subtle);
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+
+.dash-card-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--color-ivory-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #FAF7F2;
+}
+
+.dash-card-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--color-wine);
+  font-weight: 600;
+}
+
+.dash-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.86rem;
+}
+
+.dash-table th {
+  background-color: #F5EFE4;
+  padding: 0.85rem 1.25rem;
+  font-weight: 600;
+  color: var(--color-wine);
+  border-bottom: 1px solid var(--color-ivory-border);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.dash-table td {
+  padding: 0.95rem 1.25rem;
+  border-bottom: 1px solid var(--color-ivory-border);
+  color: var(--color-wine-deep);
+  vertical-align: middle;
+}
+
+.dash-table tr:hover {
+  background-color: #FCFBF7;
+}
+
+/* Status Badges */
+.badge-status {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-draft { background-color: #E2DFD9; color: #524B43; }
+.status-in_review { background-color: #F8E8C8; color: #8C6514; }
+.status-published { background-color: #D3ECD9; color: #1E5C35; }
+.status-archived { background-color: #F4D3D1; color: #8F2722; }
+
+/* Formulários do Painel */
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--color-wine);
+  margin-bottom: 0.4rem;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--color-ivory-border);
+  border-radius: 2px;
+  background-color: var(--color-white);
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  color: var(--color-wine-deep);
+  transition: border-color var(--transition-fast);
+}
+
+.form-control:focus {
+  border-color: var(--color-gold);
+  outline: none;
+}
+
+.form-help {
+  font-size: 0.76rem;
+  color: var(--color-gray-doc);
+  margin-top: 0.25rem;
+}

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ album.title }} — Acervo Fotográfico MLP{% endblock %}
+
+{% block content %}
+<section class="section-editorial">
+  <div class="container">
+    <div style="margin-bottom: var(--space-2xl);">
+      <a href="{% url 'public:gallery' %}" class="btn btn-sm btn-outline" style="margin-bottom: 1.5rem;">
+        &larr; Voltar para Todos os Álbuns
+      </a>
+      <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem;">
+        {% if album.is_historical_archive %}
+          <span class="badge-editorial">Acervo Histórico</span>
+        {% endif %}
+        {% if album.year %}
+          <span style="font-size: 0.82rem; color: var(--color-gold); font-weight: 600;">Ano: {{ album.year }}</span>
+        {% endif %}
+      </div>
+      <h1 class="font-display" style="font-size: 2.2rem; color: var(--color-wine); margin-bottom: 0.75rem;">
+        {{ album.title }}
+      </h1>
+      <p style="font-size: 0.98rem; color: var(--color-gray-doc); line-height: 1.6; max-width: 760px;">
+        {{ album.description }}
+      </p>
+    </div>
+
+    <!-- Grid de Fotografias com Protagonismo Visual -->
+    <div class="gallery-grid">
+      {% for photo in photos %}
+        <figure class="gallery-card" style="margin: 0;">
+          <a href="#" 
+             data-lightbox-trigger 
+             data-image-src="{{ photo.image.url }}" 
+             data-caption="{{ photo.caption|default:photo.title }}" 
+             data-author="{{ photo.photographer_credit }}"
+             class="gallery-image-wrap" 
+             style="display: block;"
+             aria-label="Ampliar fotografia: {{ photo.alt_text|default:photo.title }}">
+            <img src="{{ photo.image.url }}" alt="{{ photo.alt_text|default:photo.title }}" loading="lazy">
+          </a>
+          <figcaption class="gallery-meta">
+            {% if photo.title %}
+              <h4 class="gallery-title">{{ photo.title }}</h4>
+            {% endif %}
+            {% if photo.caption %}
+              <p style="font-size: 0.82rem; color: var(--color-gray-doc); line-height: 1.45; margin-bottom: 0.4rem;">
+                {{ photo.caption }}
+              </p>
+            {% endif %}
+            <div style="font-size: 0.76rem; color: var(--color-gray-light); display: flex; justify-content: space-between;">
+              <span>{{ photo.approximate_date|default:photo.year }}</span>
+              <span>Crédito: {{ photo.photographer_credit|default:"Arquivo MLP" }}</span>
+            </div>
+          </figcaption>
+        </figure>
+      {% empty %}
+        <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: var(--color-white); border: 1px dashed var(--color-ivory-border);">
+          <p style="color: var(--color-gray-doc);">Este álbum ainda não possui fotografias publicadas.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

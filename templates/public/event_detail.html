@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ event.title }} — {{ institutional.name }}{% endblock %}
+
+{% block content %}
+<section class="section-editorial">
+  <div class="container container-narrow">
+    <div style="margin-bottom: var(--space-xl);">
+      <a href="{% url 'public:events' %}" class="btn btn-sm btn-outline" style="margin-bottom: 1.5rem;">
+        &larr; Voltar para a Agenda
+      </a>
+      <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem;">
+        <span class="badge-editorial">{{ event.start_datetime|date:"d/m/Y &bull; H:i" }}</span>
+        {% if event.category %}
+          <span style="font-size: 0.8rem; color: var(--color-gold); font-weight: 600;">{{ event.category.name }}</span>
+        {% endif %}
+      </div>
+      <h1 class="font-display" style="font-size: 2.4rem; color: var(--color-wine); margin-bottom: 1rem; line-height: 1.2;">
+        {{ event.title }}
+      </h1>
+      <p class="font-serif" style="font-size: 1.15rem; font-style: italic; color: var(--color-gray-doc); line-height: 1.6;">
+        {{ event.summary }}
+      </p>
+    </div>
+
+    {% if event.cover_image %}
+      <div class="photo-frame" style="aspect-ratio: 16/9; margin-bottom: var(--space-2xl);">
+        <img src="{{ event.cover_image.url }}" alt="{{ event.title }}">
+      </div>
+    {% endif %}
+
+    <div style="background-color: var(--color-white); border: 1px solid var(--color-ivory-border); padding: var(--space-2xl); box-shadow: var(--shadow-card); margin-bottom: var(--space-2xl);">
+      <h2 class="font-display" style="font-size: 1.35rem; color: var(--color-wine); margin-bottom: 1rem;">
+        Sobre a Celebração
+      </h2>
+      <div style="font-size: 0.98rem; line-height: 1.8; color: var(--color-gray-doc); white-space: pre-line; margin-bottom: 1.5rem;">
+        {{ event.description }}
+      </div>
+
+      <div style="border-top: 1px solid var(--color-ivory-border); padding-top: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.88rem; color: var(--color-wine);">
+        <p><strong>Local:</strong> {{ event.location_name }}</p>
+        {% if event.address %}<p><strong>Endereço:</strong> {{ event.address }}</p>{% endif %}
+        {% if event.end_datetime %}<p><strong>Previsão de Término:</strong> {{ event.end_datetime|date:"d/m/Y &bull; H:i" }}</p>{% endif %}
+      </div>
+    </div>
+
+    <!-- Relações de Álbum ou Vídeo associado -->
+    {% if event.related_album %}
+      <div style="background-color: var(--color-ivory-warm); border-left: 3px solid var(--color-gold); padding: 1.25rem; margin-bottom: 1rem;">
+        <strong style="color: var(--color-wine); font-size: 0.92rem; display: block; margin-bottom: 0.25rem;">Álbum de Fotos do Evento</strong>
+        <a href="{% url 'public:album_detail' event.related_album.slug %}" style="color: var(--color-gold); text-decoration: underline; font-size: 0.88rem;">
+          Ver registros fotográficos de {{ event.related_album.title }} &rarr;
+        </a>
+      </div>
+    {% endif %}
+
+    {% if event.related_video %}
+      <div style="background-color: var(--color-ivory-warm); border-left: 3px solid var(--color-wine); padding: 1.25rem;">
+        <strong style="color: var(--color-wine); font-size: 0.92rem; display: block; margin-bottom: 0.25rem;">Gravação em Vídeo</strong>
+        <a href="{% url 'public:media_detail' event.related_video.slug %}" style="color: var(--color-wine); text-decoration: underline; font-size: 0.88rem;">
+          Assistir gravação: {{ event.related_video.title }} &rarr;
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

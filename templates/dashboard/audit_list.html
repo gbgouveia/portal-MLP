@@ -1,0 +1,64 @@
+{% extends 'dashboard/base.html' %}
+
+{% block page_title %}Trilha de Auditoria{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+  <h1 class="font-display" style="font-size: 1.6rem; color: var(--color-wine); margin-bottom: 0.35rem;">
+    Trilha de Auditoria & Governança (Logs)
+  </h1>
+  <p style="color: var(--color-gray-doc); font-size: 0.9rem;">
+    Rastreabilidade imutável de todas as criações, edições, publicações e alterações realizadas no sistema.
+  </p>
+</div>
+
+<div class="dash-card">
+  <div class="dash-card-header">
+    <span class="dash-card-title">Histórico de Eventos Recentes (Últimos 50 registros)</span>
+  </div>
+  <div style="padding: 0;">
+    <table class="dash-table">
+      <thead>
+        <tr>
+          <th>Data / Hora</th>
+          <th>Usuário Responsável</th>
+          <th>Operação</th>
+          <th>Módulo</th>
+          <th>Registro Afetado</th>
+          <th>Detalhes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in logs %}
+          <tr>
+            <td style="font-size: 0.78rem; color: var(--color-gray-doc); white-space: nowrap;">
+              {{ log.created_at|date:"d/m/Y H:i:s" }}
+            </td>
+            <td>
+              <strong>{{ log.user.username|default:"Sistema Automático" }}</strong>
+            </td>
+            <td>
+              <span class="badge-status status-{{ log.action|lower }}">{{ log.get_action_display }}</span>
+            </td>
+            <td style="font-size: 0.8rem; color: var(--color-gold); font-weight: 600;">
+              {{ log.model_name }}
+            </td>
+            <td style="font-size: 0.84rem;">
+              {{ log.object_repr }}
+            </td>
+            <td style="font-size: 0.78rem; color: var(--color-gray-doc);">
+              {{ log.details|default:"—" }}
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6" style="text-align: center; color: var(--color-gray-doc); padding: 2rem;">
+              Nenhum evento registrado na trilha de auditoria até o momento.
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

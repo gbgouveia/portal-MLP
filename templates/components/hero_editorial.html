@@ -1,0 +1,91 @@
+{% load static %}
+<!-- ==========================================================================
+     HERO SECTION 2 EDITORIAL — MINISTÉRIO LUZ DA PALAVRA
+     Referência 21st.dev: hero-section-2.tsx adaptado para Django Templates
+     Composição split-screen, máscara de recorte animada e tipografia editorial.
+     ========================================================================== -->
+<section class="hero-editorial hero-section-2" aria-label="Abertura Institucional do Ministério Luz da Palavra">
+  <div class="container hero-grid">
+    
+    <!-- Coluna de Conteúdo Editorial -->
+    <div class="hero-content">
+      <div class="hero-period-tag" data-hero-elem="tag">
+        <span class="editorial-divider-gem"></span>
+        <span>Desde {{ institutional.founding_year|default:1970 }} &bull; Tradição, Fé e Continuidade</span>
+      </div>
+
+      <h1 class="hero-title" data-hero-elem="title">
+        Ministério<br>
+        <span class="text-gold-light">Luz da Palavra</span>
+      </h1>
+
+      <blockquote class="hero-quote" data-hero-elem="quote">
+        “{{ institutional.tagline|default:'Uma história construída pela fé. Um legado que atravessa gerações. Um ministério que continua.' }}”
+      </blockquote>
+
+      <p class="hero-subtext" data-hero-elem="subtext">
+        Uma congregação cristã forjada na fidelidade às Sagradas Escrituras, iniciada sob o pastoreio dedicado do Pastor Leonel na década de 1970 e preservada com vigor para as próximas gerações.
+      </p>
+
+      <div class="hero-actions" data-hero-elem="actions">
+        <a href="{% url 'public:legacy' %}" class="btn btn-gold">
+          Conhecer o Legado do Pr. Leonel &rarr;
+        </a>
+        <a href="{% url 'public:events' %}" class="btn btn-outline-light">
+          Grade de Cultos & Horários
+        </a>
+      </div>
+
+      <!-- Métricas Históricas Rápidas -->
+      <div class="hero-stats-strip" data-hero-elem="stats">
+        <div class="hero-stat-item">
+          <span class="hero-stat-number">+50</span>
+          <span class="hero-stat-label">Anos de Ministério</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat-item">
+          <span class="hero-stat-number">1970</span>
+          <span class="hero-stat-label">Marco Fundacional</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat-item">
+          <span class="hero-stat-number">100%</span>
+          <span class="hero-stat-label">Fidelidade Bíblica</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Coluna Visual com Máscara de Recorte Editorial (Clip-Path Reveal) -->
+    <div class="hero-reveal-container" data-hero-elem="media">
+      <div class="hero-portrait-card">
+        <div class="hero-reveal-mask">
+          {% if pastoral.portrait %}
+            <img src="{{ pastoral.portrait.url }}" 
+                 alt="{{ pastoral.portrait_caption|default:'Retrato histórico do Pastor Leonel' }}" 
+                 class="hero-reveal-img"
+                 loading="eager">
+          {% else %}
+            <!-- Composição de Acervo Histórico quando foto ainda não foi carregada -->
+            <div class="hero-fallback-memorial">
+              <div class="brand-monogram brand-monogram-lg">MLP</div>
+              <p class="font-display fallback-title">Acervo Histórico</p>
+              <p class="fallback-subtitle">Registro Documental Oficial</p>
+            </div>
+          {% endif %}
+          
+          <!-- Selo Histórico Flutuante na Imagem -->
+          <div class="hero-image-badge" aria-hidden="true">
+            <span>Arquivo MLP &bull; 1970</span>
+          </div>
+        </div>
+
+        <div class="portrait-meta">
+          <strong class="portrait-name">{{ pastoral.full_name|default:"Pastor Leonel" }}</strong>
+          <span class="portrait-role">{{ pastoral.title|default:"Pastor Fundador" }} &bull; Início em {{ pastoral.ministry_start_year|default:1970 }}</span>
+          <p class="portrait-caption">{{ pastoral.portrait_caption|default:"Registro histórico preservado no arquivo memorial institucional." }}</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>

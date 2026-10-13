@@ -1,0 +1,114 @@
+{% extends 'dashboard/base.html' %}
+
+{% block page_title %}Visão Geral do Sistema{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+  <h1 class="font-display" style="font-size: 1.8rem; color: var(--color-wine); margin-bottom: 0.35rem;">
+    Painel de Gestão & Memória
+  </h1>
+  <p style="color: var(--color-gray-doc); font-size: 0.95rem;">
+    Indicadores calculados exclusivamente a partir dos registros confirmados no banco de dados.
+  </p>
+</div>
+
+<!-- Métricas Reais do Banco -->
+<div class="dash-stats-grid">
+  <div class="stat-card">
+    <span class="stat-label">Marcos Históricos</span>
+    <span class="stat-value">{{ milestone_count }}</span>
+    <span class="stat-sub">Linha do tempo (1970 ao presente)</span>
+  </div>
+
+  <div class="stat-card">
+    <span class="stat-label">Acervo Fotográfico</span>
+    <span class="stat-value">{{ photo_count }}</span>
+    <span class="stat-sub">Fotos em {{ album_count }} álbuns catalogados</span>
+  </div>
+
+  <div class="stat-card">
+    <span class="stat-label">Eventos & Agenda</span>
+    <span class="stat-value">{{ event_count }}</span>
+    <span class="stat-sub">Celebrações e reuniões</span>
+  </div>
+
+  <div class="stat-card">
+    <span class="stat-label">Catálogo Audiovisual</span>
+    <span class="stat-value">{{ media_count }}</span>
+    <span class="stat-sub">Pregações e mensagens em vídeo</span>
+  </div>
+
+  <div class="stat-card">
+    <span class="stat-label">Transmissão ao Vivo</span>
+    <div style="margin: 0.25rem 0;">
+      {% if live_stream %}
+        <span class="badge-status status-published" style="font-size: 0.85rem; padding: 0.3rem 0.6rem;">ATIVADA NO PORTAL</span>
+      {% else %}
+        <span class="badge-status status-draft" style="font-size: 0.85rem; padding: 0.3rem 0.6rem;">DESATIVADA</span>
+      {% endif %}
+    </div>
+    <span class="stat-sub">{% if live_stream %}{{ live_stream.title|truncatechars:22 }}{% else %}Nenhuma live em andamento{% endif %}</span>
+  </div>
+</div>
+
+<!-- Ações Rápidas & Trilha de Auditoria Recente -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+  <!-- Ações Rápidas -->
+  <div class="dash-card">
+    <div class="dash-card-header">
+      <span class="dash-card-title">Ações Rápidas de Gestão</span>
+    </div>
+    <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+      <a href="{% url 'dashboard:milestone_create' %}" class="btn btn-outline" style="justify-content: flex-start;">
+        + Cadastrar Novo Marco na Linha do Tempo
+      </a>
+      <a href="{% url 'dashboard:album_create' %}" class="btn btn-outline" style="justify-content: flex-start;">
+        + Criar Álbum e Enviar Fotos em Lote
+      </a>
+      <a href="{% url 'dashboard:event_create' %}" class="btn btn-outline" style="justify-content: flex-start;">
+        + Adicionar Celebração na Agenda
+      </a>
+      <a href="{% url 'dashboard:media_create' %}" class="btn btn-outline" style="justify-content: flex-start;">
+        + Cadastrar Pregação ou Iniciar Transmissão
+      </a>
+      <a href="{% url 'dashboard:legacy_edit' %}" class="btn btn-outline" style="justify-content: flex-start;">
+        &bull; Atualizar Perfil e Biografia do Pr. Leonel
+      </a>
+    </div>
+  </div>
+
+  <!-- Atividades Recentes (AuditLog) -->
+  <div class="dash-card">
+    <div class="dash-card-header">
+      <span class="dash-card-title">Últimas Atividades Registradas</span>
+      <a href="{% url 'dashboard:audit_list' %}" style="font-size: 0.78rem; color: var(--color-gold); text-decoration: none;">Ver Todas</a>
+    </div>
+    <div style="padding: 0;">
+      <table class="dash-table">
+        <thead>
+          <tr>
+            <th>Data/Hora</th>
+            <th>Usuário</th>
+            <th>Ação</th>
+            <th>Registro</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in recent_audits %}
+            <tr>
+              <td style="font-size: 0.76rem; color: var(--color-gray-doc);">{{ log.created_at|date:"d/m H:i" }}</td>
+              <td><strong>{{ log.user.username|default:"Sistema" }}</strong></td>
+              <td><span class="badge-status status-{{ log.action|lower }}">{{ log.get_action_display }}</span></td>
+              <td style="font-size: 0.8rem;">{{ log.object_repr|truncatechars:28 }}</td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="4" style="text-align: center; color: var(--color-gray-doc); padding: 1.5rem;">Nenhum registro de auditoria ainda.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

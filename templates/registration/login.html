@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acesso Restrito — Ministério Luz da Palavra</title>
+  <link rel="stylesheet" href="{% static 'css/design-system.css' %}">
+  <style>
+    body {
+      background-color: var(--color-wine-deep);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .login-card {
+      background-color: var(--color-white);
+      width: 100%;
+      max-width: 440px;
+      padding: 2.5rem;
+      border: 1px solid var(--color-gold-border);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <div class="brand-monogram" style="margin: 0 auto 1rem; width: 54px; height: 54px; font-size: 1.4rem;">MLP</div>
+      <h1 class="font-display" style="font-size: 1.35rem; color: var(--color-wine); margin-bottom: 0.35rem;">
+        Ministério Luz da Palavra
+      </h1>
+      <span class="badge-editorial">Painel de Gestão & Memória</span>
+    </div>
+
+    {% if form.errors %}
+      <div style="background-color: #FDE8E8; color: #9B1C1C; padding: 0.75rem 1rem; border-left: 3px solid #E02424; font-size: 0.85rem; margin-bottom: 1.25rem;">
+        Usuário ou senha incorretos. Por favor, tente novamente.
+      </div>
+    {% endif %}
+
+    <form method="post" action="{% url 'login' %}">
+      {% csrf_token %}
+      
+      <div class="form-group" style="margin-bottom: 1.25rem;">
+        <label for="id_username" style="display: block; font-size: 0.84rem; font-weight: 600; color: var(--color-wine); margin-bottom: 0.35rem;">
+          Nome de Usuário
+        </label>
+        <input type="text" name="username" id="id_username" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid var(--color-ivory-border); font-size: 0.95rem;" required autofocus>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1.5rem;">
+        <label for="id_password" style="display: block; font-size: 0.84rem; font-weight: 600; color: var(--color-wine); margin-bottom: 0.35rem;">
+          Senha
+        </label>
+        <input type="password" name="password" id="id_password" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid var(--color-ivory-border); font-size: 0.95rem;" required>
+      </div>
+
+      <button type="submit" class="btn btn-gold" style="width: 100%; padding: 0.85rem; font-size: 0.95rem;">
+        Entrar no Painel MLP
+      </button>
+    </form>
+
+    <div style="text-align: center; margin-top: 1.75rem; border-top: 1px solid var(--color-ivory-border); padding-top: 1rem;">
+      <a href="{% url 'public:home' %}" style="color: var(--color-gray-doc); font-size: 0.84rem; text-decoration: none;">
+        &larr; Retornar ao Portal Público
+      </a>
+    </div>
+  </div>
+</body>
+</html>

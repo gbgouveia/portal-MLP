@@ -1,0 +1,91 @@
+{% extends 'dashboard/base.html' %}
+
+{% block page_title %}{% if item %}Editar Vídeo{% else %}Novo Vídeo / Mensagem{% endif %}{% endblock %}
+
+{% block content %}
+<div style="max-width: 840px;">
+  <div style="margin-bottom: 2rem;">
+    <a href="{% url 'dashboard:media_list' %}" style="font-size: 0.85rem; color: var(--color-gold); text-decoration: none;">
+      &larr; Voltar para a Lista de Vídeos
+    </a>
+    <h1 class="font-display" style="font-size: 1.6rem; color: var(--color-wine); margin-top: 0.5rem; margin-bottom: 0.35rem;">
+      {% if item %}Editar Mídia: {{ item.title }}{% else %}Novo Vídeo ou Transmissão Oficial{% endif %}
+    </h1>
+  </div>
+
+  <div class="dash-card">
+    <div class="dash-card-header">
+      <span class="dash-card-title">Dados do Vídeo no YouTube</span>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" style="padding: 1.75rem;">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label class="form-label">Título da Mensagem ou Estudo Bíblico *</label>
+        <input type="text" name="title" class="form-control" value="{{ item.title|default:'' }}" required>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+        <div class="form-group">
+          <label class="form-label">Link ou ID do Vídeo no YouTube *</label>
+          <input type="text" name="youtube_video_id" class="form-control" value="{{ item.youtube_video_id|default:'' }}" placeholder="Ex: https://www.youtube.com/watch?v=dQw4w9WgXcQ ou dQw4w9WgXcQ" required>
+          <span class="form-help">Pode colar o link completo; o sistema extrai o ID seguro automaticamente.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Ministrante / Pregador</label>
+          <input type="text" name="preacher" class="form-control" value="{{ item.preacher|default:'Pr. Leonel' }}">
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+        <div class="form-group">
+          <label class="form-label">Referência Bíblica (Opcional)</label>
+          <input type="text" name="biblical_reference" class="form-control" value="{{ item.biblical_reference|default:'' }}" placeholder="Ex: Romanos 8:28-39">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Categoria de Mídia</label>
+          <select name="category" class="form-control">
+            <option value="">Sem Categoria</option>
+            {% for cat in categories %}
+              <option value="{{ cat.id }}" {% if item.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Sinopse da Mensagem *</label>
+        <textarea name="description" rows="4" class="form-control" required>{{ item.description|default:'' }}</textarea>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; border-top: 1px solid var(--color-ivory-border); padding-top: 1.25rem;">
+        <div class="form-group">
+          <label class="form-label">Estado Editorial</label>
+          <select name="status" class="form-control">
+            {% for code, label in statuses %}
+              <option value="{{ code }}" {% if item.status == code %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group" style="display: flex; align-items: center; padding-top: 1.5rem;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; cursor: pointer;">
+            <input type="checkbox" name="is_live" {% if item.is_live %}checked{% endif %}>
+            <strong style="color: #C02626;">Marcar como Transmissão Ao Vivo Agora</strong>
+          </label>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+        <button type="submit" class="btn btn-gold">
+          Salvar Mídia
+        </button>
+        <a href="{% url 'dashboard:media_list' %}" class="btn btn-outline">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

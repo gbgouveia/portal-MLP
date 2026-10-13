@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ institutional.name|default:"Ministério Luz da Palavra" }} — Legado Pastoral e História Institucional{% endblock %}
+
+{% block content %}
+<!-- 1. Hero Section 2 Editorial (21st.dev adaptado) -->
+{% include 'components/hero_editorial.html' %}
+
+
+<!-- 2. Alerta de Transmissão ao Vivo Confirmada (apenas se houver live real) -->
+{% if live_broadcast %}
+<div class="live-stream-bar" role="region" aria-label="Transmissão ao vivo">
+  <div class="container live-stream-inner">
+    <div style="display: flex; align-items: center; gap: 0.85rem;">
+      <span class="live-pulse" aria-hidden="true"></span>
+      <span class="live-indicator">Ao Vivo no YouTube:</span>
+      <strong style="color: var(--color-ivory-warm); font-size: 0.92rem;">{{ live_broadcast.title }}</strong>
+    </div>
+    <a href="{% url 'public:media_detail' live_broadcast.slug %}" class="btn btn-sm btn-gold">
+      Assistir Transmissão Oficial
+    </a>
+  </div>
+</div>
+{% endif %}
+
+<!-- 3. Eixo Narrativo: O Legado Pastoral que Atravessa Gerações -->
+<section class="section-editorial bg-ivory-warm">
+  <div class="container">
+    <div class="section-header-editorial">
+      <span class="badge-editorial section-badge">Eixo Narrativo Central</span>
+      <h2 class="section-title">O Legado do Pastor Leonel</h2>
+      <p class="section-subtitle">
+        Mais do que memórias do passado, a fidelidade ao Evangelho e o zelo pastoral deixados pelo fundador continuam a inspirar e nortear o presente da nossa comunidade.
+      </p>
+    </div>
+
+    <div class="legacy-split-grid">
+      <div class="legacy-story-column">
+        <h3 class="font-display legacy-section-title">
+          Fidelidade Bíblica e Dedicação ao Rebanho
+        </h3>
+        <p class="legacy-bio-lead">
+          {{ pastoral.short_bio }}
+        </p>
+        {% if pastoral.core_values %}
+          <div class="core-values-box">
+            <strong class="core-values-label">
+              Valores Pastorais Fundamentais
+            </strong>
+            <p class="core-values-text">
+              {{ pastoral.core_values }}
+            </p>
+          </div>
+        {% endif %}
+        <a href="{% url 'public:legacy' %}" class="btn btn-outline">
+          Acessar Biografia Completa e Linha do Tempo &rarr;
+        </a>
+      </div>
+
+      <!-- Marcos em Destaque da Linha do Tempo -->
+      <div class="milestones-highlight-card">
+        <h4 class="font-display milestones-card-title">
+          Marcos Históricos Confirmados
+        </h4>
+        <div class="milestones-list">
+          {% for m in milestones %}
+            <div class="milestone-item">
+              <span class="badge-editorial milestone-date">{{ m.formatted_date }}</span>
+              <div class="milestone-content">
+                <strong class="milestone-title">{{ m.title }}</strong>
+                <p class="milestone-summary">{{ m.summary|truncatewords:20 }}</p>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. Cultos e Horários de Encontro Comunitário -->
+<section class="section-editorial">
+  <div class="container">
+    <div class="section-header-editorial">
+      <span class="badge-editorial section-badge">Vida Comunitária</span>
+      <h2 class="section-title">Encontros de Fé e Adoração</h2>
+      <p class="section-subtitle">
+        Venha celebrar conosco. Nossos cultos são abertos a todos que buscam a Deus e o ensino fiel das Escrituras.
+      </p>
+    </div>
+
+    <div class="schedule-grid">
+      {% for s in schedules %}
+        <div class="schedule-card">
+          <div class="schedule-day-time">
+            <span>{{ s.get_weekday_display }}</span>
+            <span>{{ s.time|time:"H:i" }}</span>
+          </div>
+          <h3 class="schedule-title">{{ s.title }}</h3>
+          <p class="schedule-description">
+            {{ s.description|default:"Exposição bíblica, louvor congregacional e comunhão." }}
+          </p>
+          <div class="schedule-location">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-gold">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <span>{{ s.location }}</span>
+          </div>
+        </div>
+      {% empty %}
+        <div class="empty-state-message">
+          <p>Horários em atualização no painel institucional.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- 5. Biblioteca Audiovisual e Mensagens Recentes -->
+<section class="section-editorial bg-wine-deep">
+  <div class="container">
+    <div class="section-header-editorial">
+      <span class="badge-editorial badge-dark section-badge">Canal Oficial</span>
+      <h2 class="section-title text-ivory-warm">Palavra & Pregações</h2>
+      <p class="section-subtitle text-gray-subtle">
+        Acesse os estudos bíblicos e ministrações gravadas do Ministério Luz da Palavra.
+      </p>
+    </div>
+
+    <div class="media-grid">
+      {% for item in recent_messages %}
+        <div class="media-card">
+          <div class="media-thumbnail-wrap">
+            {% if item.fallback_thumbnail_url %}
+              <img src="{{ item.fallback_thumbnail_url }}" alt="{{ item.title }}" loading="lazy" class="media-thumbnail">
+            {% else %}
+              <div class="media-thumbnail-fallback">
+                <span>Vídeo Oficial MLP</span>
+              </div>
+            {% endif %}
+          </div>
+          <div class="media-content">
+            <span class="badge-editorial badge-dark media-preacher">{{ item.preacher|default:"Pr. Leonel" }}</span>
+            <h3 class="media-title">{{ item.title }}</h3>
+            {% if item.biblical_reference %}
+              <p class="media-reference">Ref: {{ item.biblical_reference }}</p>
+            {% endif %}
+            <p class="media-description">{{ item.description|truncatewords:18 }}</p>
+            <a href="{% url 'public:media_detail' item.slug %}" class="btn btn-sm btn-outline-light media-action-btn">
+              Assistir Mensagem
+            </a>
+          </div>
+        </div>
+      {% empty %}
+        <div class="empty-state-message-dark">
+          <p>Catálogo audiovisual em organização. Novos vídeos serão disponibilizados em breve pelo canal oficial.</p>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="text-center mt-2xl">
+      <a href="{% url 'public:media' %}" class="btn btn-gold">
+        Ver Todas as Mensagens e Gravações
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 6. Acervo Fotográfico Documental -->
+<section class="section-editorial">
+  <div class="container">
+    <div class="section-header-editorial">
+      <span class="badge-editorial section-badge">Patrimônio Visual</span>
+      <h2 class="section-title">Memória em Imagens</h2>
+      <p class="section-subtitle">
+        Fotografias históricas e celebrações que documentam a caminhada da nossa congregação.
+      </p>
+    </div>
+
+    <div class="gallery-grid">
+      {% for photo in recent_photos %}
+        <div class="gallery-card">
+          <a href="#" data-lightbox-trigger data-image-src="{{ photo.image.url }}" data-caption="{{ photo.caption }}" data-author="{{ photo.photographer_credit }}" class="gallery-image-wrap">
+            <img src="{{ photo.image.url }}" alt="{{ photo.alt_text|default:photo.title }}" loading="lazy">
+          </a>
+          <div class="gallery-meta">
+            <h4 class="gallery-title">{{ photo.title|default:photo.album.title }}</h4>
+            <span class="gallery-date-credit">{{ photo.approximate_date|default:photo.year|default:"Acervo Histórico" }} &bull; {{ photo.photographer_credit|default:"Arquivo MLP" }}</span>
+          </div>
+        </div>
+      {% empty %}
+        <div class="empty-state-message">
+          <p>
+            O acervo fotográfico histórico está sendo digitalizado e cadastrado pelo painel de curadoria.
+          </p>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="text-center mt-2xl">
+      <a href="{% url 'public:gallery' %}" class="btn btn-outline">
+        Explorar Todos os Álbuns do Acervo &rarr;
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}

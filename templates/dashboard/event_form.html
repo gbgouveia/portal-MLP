@@ -1,0 +1,103 @@
+{% extends 'dashboard/base.html' %}
+
+{% block page_title %}{% if event %}Editar Evento{% else %}Novo Evento{% endif %}{% endblock %}
+
+{% block content %}
+<div style="max-width: 840px;">
+  <div style="margin-bottom: 2rem;">
+    <a href="{% url 'dashboard:events_list' %}" style="font-size: 0.85rem; color: var(--color-gold); text-decoration: none;">
+      &larr; Voltar para a Lista de Eventos
+    </a>
+    <h1 class="font-display" style="font-size: 1.6rem; color: var(--color-wine); margin-top: 0.5rem; margin-bottom: 0.35rem;">
+      {% if event %}Editar Evento: {{ event.title }}{% else %}Novo Evento na Agenda{% endif %}
+    </h1>
+  </div>
+
+  <div class="dash-card">
+    <div class="dash-card-header">
+      <span class="dash-card-title">Informações da Celebração</span>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" style="padding: 1.75rem;">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label class="form-label">Título da Celebração / Evento *</label>
+        <input type="text" name="title" class="form-control" value="{{ event.title|default:'' }}" required>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+        <div class="form-group">
+          <label class="form-label">Data e Hora de Início *</label>
+          <input type="datetime-local" name="start_datetime" class="form-control" value="{{ event.start_datetime|date:'Y-m-d\TH:i' }}" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Categoria</label>
+          <select name="category" class="form-control">
+            <option value="">Sem Categoria Específica</option>
+            {% for cat in categories %}
+              <option value="{{ cat.id }}" {% if event.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+        <div class="form-group">
+          <label class="form-label">Nome do Local</label>
+          <input type="text" name="location_name" class="form-control" value="{{ event.location_name|default:'Templo Sede MLP' }}">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Endereço Completo</label>
+          <input type="text" name="address" class="form-control" value="{{ event.address|default:'' }}">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Resumo Sintético *</label>
+        <textarea name="summary" rows="2" class="form-control" required>{{ event.summary|default:'' }}</textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Descrição Completa e Instruções</label>
+        <textarea name="description" rows="5" class="form-control">{{ event.description|default:'' }}</textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Imagem de Divulgação / Banner</label>
+        <input type="file" name="cover_image" class="form-control" accept="image/*">
+        {% if event.cover_image %}
+          <span class="form-help">Banner atual: <a href="{{ event.cover_image.url }}" target="_blank">Ver imagem</a></span>
+        {% endif %}
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; border-top: 1px solid var(--color-ivory-border); padding-top: 1.25rem;">
+        <div class="form-group">
+          <label class="form-label">Estado Editorial</label>
+          <select name="status" class="form-control">
+            {% for code, label in statuses %}
+              <option value="{{ code }}" {% if event.status == code %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group" style="display: flex; align-items: center; padding-top: 1.5rem;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; cursor: pointer;">
+            <input type="checkbox" name="is_featured" {% if event.is_featured %}checked{% endif %}>
+            <strong>Destacar na Página Inicial</strong>
+          </label>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+        <button type="submit" class="btn btn-gold">
+          Salvar Evento
+        </button>
+        <a href="{% url 'dashboard:events_list' %}" class="btn btn-outline">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

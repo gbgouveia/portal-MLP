@@ -1,0 +1,37 @@
+{% load static %}
+<header class="site-header" role="banner">
+  <div class="container header-inner">
+    <a href="{% url 'public:home' %}" class="brand-link" aria-label="Ir para a página inicial do Ministério Luz da Palavra">
+      <div class="brand-monogram">MLP</div>
+      <div class="brand-text">
+        <span class="brand-name">{{ institutional.name|default:"Ministério Luz da Palavra" }}</span>
+        <span class="brand-sub">Legado &bull; Fé &bull; Continuidade</span>
+      </div>
+    </a>
+
+    <!-- Botão Hamburger Mobile -->
+    <button class="mobile-toggle" aria-label="Abrir menu de navegação" aria-expanded="false" aria-controls="site-nav-menu">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    </button>
+
+    <nav class="site-nav" id="site-nav-menu" role="navigation" aria-label="Navegação institucional">
+      <a href="{% url 'public:home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Início</a>
+      <a href="{% url 'public:legacy' %}" class="nav-link {% if request.resolver_match.url_name == 'legacy' %}active{% endif %}">Legado do Pr. Leonel</a>
+      <a href="{% url 'public:history' %}" class="nav-link {% if request.resolver_match.url_name == 'history' %}active{% endif %}">Nossa História</a>
+      <a href="{% url 'public:events' %}" class="nav-link {% if request.resolver_match.url_name == 'events' %}active{% endif %}">Agenda & Cultos</a>
+      <a href="{% url 'public:gallery' %}" class="nav-link {% if request.resolver_match.url_name == 'gallery' %}active{% endif %}">Acervo Fotográfico</a>
+      <a href="{% url 'public:media' %}" class="nav-link {% if request.resolver_match.url_name == 'media' %}active{% endif %}">Mensagens & Ao Vivo</a>
+      <a href="{% url 'public:contact' %}" class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">Contato</a>
+      
+      {% if user.is_authenticated %}
+        <a href="{% url 'dashboard:index' %}" class="nav-link nav-btn-highlight">Painel MLP</a>
+      {% else %}
+        <a href="{% url 'login' %}" class="nav-link nav-btn-highlight">Área Restrita</a>
+      {% endif %}
+    </nav>
+  </div>
+</header>

@@ -1,0 +1,62 @@
+{% extends 'dashboard/base.html' %}
+
+{% block page_title %}Upload de Fotos — {{ album.title }}{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+  <a href="{% url 'dashboard:albums_list' %}" style="font-size: 0.85rem; color: var(--color-gold); text-decoration: none;">
+    &larr; Voltar para Lista de Álbuns
+  </a>
+  <h1 class="font-display" style="font-size: 1.6rem; color: var(--color-wine); margin-top: 0.5rem; margin-bottom: 0.35rem;">
+    Fotos do Álbum: {{ album.title }}
+  </h1>
+  <p style="color: var(--color-gray-doc); font-size: 0.9rem;">
+    Envio de fotografias em lote com preservação da resolução original e metadados de arquivo.
+  </p>
+</div>
+
+<!-- Área de Upload em Lote -->
+<div class="dash-card" style="margin-bottom: 2rem;">
+  <div class="dash-card-header">
+    <span class="dash-card-title">Upload de Múltiplas Fotografias</span>
+  </div>
+  <form method="post" enctype="multipart/form-data" style="padding: 1.75rem;">
+    {% csrf_token %}
+    <div class="form-group">
+      <label class="form-label">Selecione uma ou mais fotos para envio simultâneo *</label>
+      <input type="file" name="photos" class="form-control" multiple accept="image/*" required>
+      <span class="form-help">Você pode selecionar dezenas de arquivos de uma só vez segurando a tecla Ctrl ou Shift.</span>
+    </div>
+    <button type="submit" class="btn btn-gold">
+      Enviar Fotografias Selecionadas
+    </button>
+  </form>
+</div>
+
+<!-- Lista das Fotos Já Enviadas -->
+<div class="dash-card">
+  <div class="dash-card-header">
+    <span class="dash-card-title">Fotografias no Álbum ({{ photos.count }})</span>
+  </div>
+  <div style="padding: 1.5rem;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.25rem;">
+      {% for photo in photos %}
+        <div style="background: #FDFBF8; border: 1px solid var(--color-ivory-border); border-radius: 2px; overflow: hidden; display: flex; flex-direction: column;">
+          <div style="aspect-ratio: 4/3; background: #000; overflow: hidden;">
+            <img src="{{ photo.image.url }}" alt="{{ photo.alt_text|default:photo.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+          <div style="padding: 0.75rem; flex: 1; font-size: 0.8rem;">
+            <strong style="color: var(--color-wine); display: block; margin-bottom: 0.2rem;">{{ photo.title }}</strong>
+            <p style="color: var(--color-gray-doc); font-size: 0.75rem; margin-bottom: 0.25rem;">{{ photo.caption|default:"Sem legenda"|truncatechars:40 }}</p>
+            <span style="color: var(--color-gold); font-size: 0.72rem;">{{ photo.photographer_credit|default:"Acervo MLP" }}</span>
+          </div>
+        </div>
+      {% empty %}
+        <p style="grid-column: 1/-1; text-align: center; color: var(--color-gray-doc); padding: 2rem;">
+          Nenhuma fotografia enviada para este álbum ainda.
+        </p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

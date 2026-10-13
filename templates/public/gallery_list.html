@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Acervo Fotográfico Documental — {{ institutional.name }}{% endblock %}
+
+{% block content %}
+<section class="hero-editorial" style="padding: var(--space-3xl) 0 var(--space-2xl);">
+  <div class="container container-narrow" style="text-align: center;">
+    <span class="badge-editorial badge-dark" style="margin-bottom: 1rem;">Patrimônio Visual & Memória</span>
+    <h1 class="hero-title" style="font-size: 2.8rem; margin-bottom: 1rem;">
+      Acervo Fotográfico
+    </h1>
+    <p class="font-serif" style="font-size: 1.15rem; font-style: italic; color: var(--color-ivory-warm); line-height: 1.6;">
+      Registros visuais autênticos que documentam a caminhada da congregação desde os anos 1970 até as celebrações contemporâneas.
+    </p>
+  </div>
+</section>
+
+<section class="section-editorial">
+  <div class="container">
+    <!-- Filtros de Categorias -->
+    {% if categories %}
+      <div style="display: flex; justify-content: center; gap: 0.75rem; margin-bottom: var(--space-2xl); flex-wrap: wrap;">
+        <a href="{% url 'public:gallery' %}" class="btn btn-sm {% if not selected_category %}btn-primary{% else %}btn-outline{% endif %}">
+          Todos os Álbuns
+        </a>
+        {% for cat in categories %}
+          <a href="{% url 'public:gallery' %}?categoria={{ cat.slug }}" class="btn btn-sm {% if selected_category == cat.slug %}btn-primary{% else %}btn-outline{% endif %}">
+            {{ cat.name }}
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <!-- Acervo Histórico Documental (Décadas Anteriores) -->
+    {% if historical_albums %}
+      <div style="margin-bottom: var(--space-4xl);">
+        <div class="section-header-editorial" style="text-align: left; margin-bottom: var(--space-xl);">
+          <span class="badge-editorial section-badge">Preservação & Memória</span>
+          <h2 class="section-title" style="font-size: 1.8rem;">Acervo Histórico (Décadas Passadas)</h2>
+        </div>
+
+        <div class="gallery-grid">
+          {% for album in historical_albums %}
+            <article class="gallery-card">
+              <a href="{% url 'public:album_detail' album.slug %}" class="gallery-image-wrap" style="display: block;">
+                {% if album.cover_image %}
+                  <img src="{{ album.cover_image.url }}" alt="{{ album.title }}" loading="lazy">
+                {% else %}
+                  <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #35231F; color: var(--color-gold);">
+                    <span>Acervo Memorial MLP</span>
+                  </div>
+                {% endif %}
+              </a>
+              <div class="gallery-meta">
+                <span class="badge-editorial" style="margin-bottom: 0.4rem;">{{ album.year|default:"Arquivo Histórico" }}</span>
+                <h3 class="gallery-title" style="font-size: 1.05rem;">
+                  <a href="{% url 'public:album_detail' album.slug %}" style="text-decoration: none; color: inherit;">
+                    {{ album.title }}
+                  </a>
+                </h3>
+                <p style="font-size: 0.82rem; color: var(--color-gray-doc); line-height: 1.4; margin-top: 0.35rem;">
+                  {{ album.description|truncatewords:15 }}
+                </p>
+                <div style="margin-top: 0.75rem; font-size: 0.75rem; color: var(--color-gray-light);">
+                  {{ album.photo_count }} fotografias catalogadas
+                </div>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Álbuns Contemporâneos e Gerais -->
+    <div>
+      <div class="section-header-editorial" style="text-align: left; margin-bottom: var(--space-xl);">
+        <span class="badge-editorial section-badge">Vida Congregacional</span>
+        <h2 class="section-title" style="font-size: 1.8rem;">Celebrações e Encontros</h2>
+      </div>
+
+      <div class="gallery-grid">
+        {% for album in regular_albums %}
+          <article class="gallery-card">
+            <a href="{% url 'public:album_detail' album.slug %}" class="gallery-image-wrap" style="display: block;">
+              {% if album.cover_image %}
+                <img src="{{ album.cover_image.url }}" alt="{{ album.title }}" loading="lazy">
+              {% else %}
+                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #35231F; color: var(--color-gold);">
+                  <span>Celebração MLP</span>
+                </div>
+              {% endif %}
+            </a>
+            <div class="gallery-meta">
+              {% if album.event_date %}
+                <span style="font-size: 0.76rem; color: var(--color-gray-light); display: block; margin-bottom: 0.25rem;">
+                  {{ album.event_date|date:"d/m/Y" }}
+                </span>
+              {% endif %}
+              <h3 class="gallery-title" style="font-size: 1.05rem;">
+                <a href="{% url 'public:album_detail' album.slug %}" style="text-decoration: none; color: inherit;">
+                  {{ album.title }}
+                </a>
+              </h3>
+              <p style="font-size: 0.82rem; color: var(--color-gray-doc); line-height: 1.4; margin-top: 0.35rem;">
+                {{ album.description|truncatewords:15 }}
+              </p>
+              <div style="margin-top: 0.75rem; font-size: 0.75rem; color: var(--color-gray-light);">
+                {{ album.photo_count }} registros fotográficos
+              </div>
+            </div>
+          </article>
+        {% empty %}
+          {% if not historical_albums %}
+            <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: var(--color-white); border: 1px dashed var(--color-ivory-border);">
+              <p style="color: var(--color-gray-doc);">Novos álbuns de fotografias estão em processamento pelo painel administrativo.</p>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

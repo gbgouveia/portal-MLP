@@ -1,0 +1,69 @@
+{% load static %}
+<footer class="site-footer" role="contentinfo">
+  <div class="container">
+    <div class="footer-grid">
+      <!-- Coluna Institucional Principal -->
+      <div class="footer-col">
+        <div class="brand-link" style="margin-bottom: 1rem;">
+          <div class="brand-monogram">MLP</div>
+          <div class="brand-text">
+            <span class="brand-name" style="color: var(--color-ivory-warm);">{{ institutional.name|default:"Ministério Luz da Palavra" }}</span>
+            <span class="brand-sub">Desde {{ institutional.founding_year|default:1970 }}</span>
+          </div>
+        </div>
+        <p style="font-size: 0.88rem; color: var(--color-gray-subtle); line-height: 1.6; margin-bottom: 1.25rem;">
+          {{ institutional.tagline|default:"Uma história construída pela fé. Um legado que atravessa gerações. Um ministério que continua." }}
+        </p>
+        <span class="badge-editorial badge-dark">Acervo Memorial & Histórico</span>
+      </div>
+
+      <!-- Links Rápidos -->
+      <div class="footer-col">
+        <h4>Memória & Legado</h4>
+        <ul class="footer-links">
+          <li><a href="{% url 'public:legacy' %}">Vida e Ministério do Pr. Leonel</a></li>
+          <li><a href="{% url 'public:legacy' %}#linha-do-tempo">Linha do Tempo (1970 aos dias atuais)</a></li>
+          <li><a href="{% url 'public:history' %}">Trajetória Institucional</a></li>
+          <li><a href="{% url 'public:gallery' %}">Acervo Fotográfico Histórico</a></li>
+        </ul>
+      </div>
+
+      <!-- Vida Comunitária -->
+      <div class="footer-col">
+        <h4>Comunidade & Fé</h4>
+        <ul class="footer-links">
+          <li><a href="{% url 'public:events' %}">Grade de Cultos e Reuniões</a></li>
+          <li><a href="{% url 'public:media' %}">Pregações e Estudos Bíblicos</a></li>
+          <li><a href="{% url 'public:media' %}#ao-vivo">Transmissões no YouTube</a></li>
+          <li><a href="{% url 'public:contact' %}">Localização e Como Chegar</a></li>
+        </ul>
+      </div>
+
+      <!-- Informações Oficiais -->
+      <div class="footer-col">
+        <h4>Sede & Contato</h4>
+        <p style="font-size: 0.85rem; color: var(--color-gray-subtle); line-height: 1.5; margin-bottom: 0.75rem;">
+          {{ institutional.address|default:"Sede Central — Ministério Luz da Palavra" }}<br>
+          {{ institutional.city_state|default:"Brasil" }}
+        </p>
+        <p style="font-size: 0.85rem; color: var(--color-gold-light); margin-bottom: 0.5rem;">
+          {{ institutional.email|default:"contato@luzdapalavra.org.br" }}
+        </p>
+        {% if institutional.phone %}
+          <p style="font-size: 0.85rem; color: var(--color-gray-subtle);">
+            Tel: {{ institutional.phone }}
+          </p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; {% now "Y" %} {{ institutional.name|default:"Ministério Luz da Palavra" }}. Todos os direitos de preservação histórica reservados.</p>
+      <div style="display: flex; gap: 1.5rem; align-items: center;">
+        <a href="{% url 'public:contact' %}" style="color: var(--color-gray-doc); text-decoration: none;">Canais Oficiais</a>
+        <span>&bull;</span>
+        <a href="{% url 'dashboard:index' %}" style="color: var(--color-gold); text-decoration: none; font-weight: 500;">Gestão do Acervo & Painel</a>
+      </div>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}O Legado Pastoral do Pastor Leonel — {{ institutional.name }}{% endblock %}
+
+
+{% block content %}
+<!-- Abertura Memorial com Three.js sob Demanda -->
+<section class="three-memorial-section" aria-label="Memorial do Legado">
+  <div id="memorial-three-canvas" class="three-canvas-container" aria-hidden="true"></div>
+  
+  <div class="container container-narrow text-center" style="position: relative; z-index: 2;">
+    <span class="badge-editorial badge-dark section-badge">Memória, Vocação e Ministério</span>
+    <h1 class="hero-title mb-md">
+      O Legado Pastoral do<br>
+      <span class="text-gold-light">Pastor Leonel</span>
+    </h1>
+    <p class="font-serif hero-quote" style="border: none; padding: 0; max-width: 680px; margin: 0 auto 1.5rem;">
+      “Uma vida gasta no altar de Deus, ensinando com autoridade bíblica e pastoreando corações com genuína mansidão.”
+    </p>
+    <span class="legacy-period-subtitle">
+      Ministério Ativo documentado desde os Anos 1970
+    </span>
+  </div>
+</section>
+
+<!-- Biografia e Retrato Oficial -->
+<section class="section-editorial">
+  <div class="container">
+    <div class="legacy-bio-grid">
+
+      <!-- Cartão do Retrato Oficial -->
+      <div class="hero-portrait-card">
+        <div class="hero-portrait-wrapper">
+          {% if pastoral.portrait %}
+            <img src="{{ pastoral.portrait.url }}" alt="{{ pastoral.portrait_caption|default:'Retrato Oficial do Pr. Leonel' }}">
+          {% else %}
+            <div class="hero-fallback-memorial">
+              <span class="brand-monogram brand-monogram-lg">MLP</span>
+              <p class="font-display">Retrato Oficial</p>
+              <p class="fallback-subtitle">Acervo Histórico</p>
+            </div>
+          {% endif %}
+        </div>
+        <div class="portrait-meta">
+          <strong class="portrait-name">{{ pastoral.full_name }}</strong>
+          <span class="portrait-role">{{ pastoral.title }}</span>
+          <p class="portrait-caption">{{ pastoral.portrait_caption }}</p>
+        </div>
+      </div>
+
+      <!-- Texto Biográfico Editorial -->
+      <div>
+        <span class="badge-editorial section-badge">Trajetória e Vocação</span>
+        <h2 class="section-title mb-lg">Caminhada Ministerial</h2>
+
+        <p class="legacy-lead-text">
+          {{ pastoral.short_bio }}
+        </p>
+
+        <div class="legacy-full-text">
+          {{ pastoral.full_biography }}
+        </div>
+
+        {% if pastoral.core_values %}
+          <div class="legacy-values-card">
+            <h3 class="font-display core-values-title">
+              Princípios Ministeriais Transmitidos
+            </h3>
+            <p class="core-values-body">
+              {{ pastoral.core_values }}
+            </p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Linha do Tempo Histórica Interativa (1970 - Presente) -->
+<section id="linha-do-tempo" class="section-editorial bg-ivory-warm">
+  <div class="container">
+    <div class="section-header-editorial">
+      <span class="badge-editorial section-badge">Cronologia Interativa</span>
+      <h2 class="section-title">Linha do Tempo Histórica</h2>
+      <p class="section-subtitle">
+        Acontecimentos e marcos confirmados da fundação nos anos 1970 até os dias atuais.
+      </p>
+    </div>
+
+    <!-- Navegação por Décadas -->
+    <div class="decade-nav" role="toolbar" aria-label="Filtrar marcos por década">
+      <button class="decade-filter-btn active" data-decade="all" aria-pressed="true">Todas as Décadas</button>
+      {% for dec in decades %}
+        <button class="decade-filter-btn" data-decade="{{ dec }}" aria-pressed="false">{{ dec }}</button>
+      {% endfor %}
+    </div>
+
+    <!-- Linha do Tempo Estruturada -->
+    <div class="timeline-wrapper">
+      <div class="timeline-line" aria-hidden="true"></div>
+
+      {% for m in milestones %}
+        <article class="timeline-item" data-decade="{{ m.decade }}" id="marco-{{ m.slug }}">
+          <div class="timeline-node" aria-hidden="true"></div>
+
+          <div class="timeline-card">
+            <div class="timeline-header-meta">
+              <span class="timeline-year">{{ m.formatted_date }}</span>
+              <span class="timeline-decade-tag">{{ m.decade }}</span>
+            </div>
+
+            <h3 class="timeline-title">{{ m.title }}</h3>
+
+            {% if m.primary_image %}
+              <div class="photo-frame timeline-photo-frame">
+                <img src="{{ m.primary_image.url }}" alt="{{ m.image_caption|default:m.title }}" loading="lazy">
+              </div>
+              {% if m.image_caption %}
+                <p class="photo-caption">{{ m.image_caption }} &bull; {{ m.image_source }}</p>
+              {% endif %}
+            {% endif %}
+
+            <p class="timeline-summary">{{ m.summary }}</p>
+
+            {% if m.full_story or m.documents.all or m.related_album %}
+              <button class="btn btn-sm btn-outline milestone-expand-btn mt-md" data-target="details-{{ m.id }}" aria-expanded="false">
+                Ver Contexto Histórico Completo
+              </button>
+
+              <div id="details-{{ m.id }}" class="milestone-detail-body" aria-hidden="true">
+                {% if m.full_story %}
+                  <div class="milestone-full-story">
+                    {{ m.full_story }}
+                  </div>
+                {% endif %}
+
+                {% if m.documents.all %}
+                  <div class="milestone-docs-box">
+                    <strong class="milestone-docs-title">
+                      Documentos Históricos do Acervo:
+                    </strong>
+                    <ul class="milestone-docs-list">
+                      {% for doc in m.documents.all %}
+                        <li>
+                          &bull; {{ doc.title }} ({{ doc.approximate_date|default:doc.year }})
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                {% endif %}
+
+                {% if m.related_album %}
+                  <div class="milestone-album-link">
+                    <a href="{% url 'public:album_detail' m.related_album.slug %}">
+                      Ver Álbum Completo: {{ m.related_album.title }} &rarr;
+                    </a>
+                  </div>
+                {% endif %}
+              </div>
+            {% endif %}
+          </div>
+        </article>
+      {% empty %}
+        <div class="empty-state-message">
+          <p>Marcos históricos em catalogação no arquivo central.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Testemunhos Autorizados -->
+{% if testimonials %}
+<section class="section-editorial">
+  <div class="container container-narrow">
+    <div class="section-header-editorial">
+      <span class="badge-editorial section-badge">Vozes da Comunidade</span>
+      <h2 class="section-title">Testemunhos Autorizados</h2>
+      <p class="section-subtitle">
+        Depoimentos que testemunham o impacto espiritual e a integridade do ministério pastoral.
+      </p>
+    </div>
+
+    <div class="testimonials-stack">
+      {% for t in testimonials %}
+        <div class="testimonial-card">
+          <blockquote class="font-serif testimonial-quote">
+            “{{ t.testimony_text }}”
+          </blockquote>
+          <div class="testimonial-footer">
+            <div>
+              <strong class="testimonial-author">{{ t.author_name }}</strong>
+              <span class="testimonial-role">{{ t.author_role }}</span>
+            </div>
+            {% if t.year_context %}
+              <span class="testimonial-year">Registro: {{ t.year_context }}</span>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="{% static 'js/three/memorial-canvas.js' %}"></script>
+<script src="{% static 'js/timeline/timeline-interactive.js' %}"></script>
+{% endblock %}

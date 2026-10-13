@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ institutional.name|default:"Ministério Luz da Palavra" }} — Legado Pastoral e História{% endblock %}</title>
+  
+  <meta name="description" content="{% block meta_description %}{{ institutional.tagline|default:'Uma história construída pela fé. Um legado que atravessa gerações. Um ministério que continua.' }}{% endblock %}">
+  <meta name="author" content="Ministério Luz da Palavra">
+  
+  <!-- Open Graph / Redes Sociais -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{% block og_title %}{{ institutional.name|default:'Ministério Luz da Palavra' }}{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}{{ institutional.tagline }}{% endblock %}">
+  
+  <!-- Favicon e Fontes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- Folhas de Estilo -->
+  <link rel="stylesheet" href="{% static 'css/design-system.css' %}">
+  <link rel="stylesheet" href="{% static 'css/public.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <!-- Cabeçalho Institucional -->
+  {% include 'components/header.html' %}
+
+  <!-- Conteúdo Principal -->
+  <main id="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Rodapé Institucional -->
+  {% include 'components/footer.html' %}
+
+  <!-- Lightbox Modal Global -->
+  {% include 'components/lightbox.html' %}
+
+  <!-- Navegação Flutuante Auxiliar (Mac OS Dock 21st.dev) -->
+  {% include 'components/dock.html' %}
+
+  <!-- Scripts Centrais -->
+  <script src="{% static 'js/core/app.js' %}"></script>
+  <script src="{% static 'js/core/dock-interactive.js' %}"></script>
+  <script src="{% static 'js/gallery/lightbox.js' %}"></script>
+  
+  <!-- Bibliotecas de Movimento sob Demanda (CDNs seguras com fallback) -->
+  {% block vendor_scripts %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
+    <script src="{% static 'js/animations/gsap-choreography.js' %}"></script>
+  {% endblock %}
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

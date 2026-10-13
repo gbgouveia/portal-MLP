@@ -1,0 +1,93 @@
+{% extends 'dashboard/base.html' %}
+
+{% block page_title %}{% if milestone %}Editar Marco Histórico{% else %}Novo Marco Histórico{% endif %}{% endblock %}
+
+{% block content %}
+<div style="max-width: 840px;">
+  <div style="margin-bottom: 2rem;">
+    <a href="{% url 'dashboard:milestones_list' %}" style="font-size: 0.85rem; color: var(--color-gold); text-decoration: none;">
+      &larr; Voltar para a Lista de Marcos
+    </a>
+    <h1 class="font-display" style="font-size: 1.6rem; color: var(--color-wine); margin-top: 0.5rem; margin-bottom: 0.35rem;">
+      {% if milestone %}Editar Marco: {{ milestone.title }}{% else %}Novo Marco na Linha do Tempo{% endif %}
+    </h1>
+    <p style="color: var(--color-gray-doc); font-size: 0.9rem;">
+      Insira informações confirmadas. Para datas sem dia ou mês exatos, utilize a indicação de data apropriada.
+    </p>
+  </div>
+
+  <div class="dash-card">
+    <div class="dash-card-header">
+      <span class="dash-card-title">Dados do Marco Cronológico</span>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" style="padding: 1.75rem;">
+      {% csrf_token %}
+
+      <div style="display: grid; grid-template-columns: 180px 1fr; gap: 1.25rem;">
+        <div class="form-group">
+          <label class="form-label">Ano do Acontecimento *</label>
+          <input type="number" name="year" class="form-control" value="{{ milestone.year|default:1970 }}" required>
+          <span class="form-help">Ex: 1970, 1982, 1995</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Datação Apropriada / Exibição</label>
+          <input type="text" name="approximate_date_display" class="form-control" value="{{ milestone.approximate_date_display|default:'' }}" placeholder="Ex: Início dos anos 1970, Outubro de 1982...">
+          <span class="form-help">Utilize quando o dia e mês exatos não forem conhecidos com certeza.</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Título do Acontecimento *</label>
+        <input type="text" name="title" class="form-control" value="{{ milestone.title|default:'' }}" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Resumo Sintético *</label>
+        <textarea name="summary" rows="3" class="form-control" required>{{ milestone.summary|default:'' }}</textarea>
+        <span class="form-help">Descrição concisa exibida nos cards da linha do tempo.</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Relato Histórico Completo e Contextualização</label>
+        <textarea name="full_story" rows="6" class="form-control">{{ milestone.full_story|default:'' }}</textarea>
+        <span class="form-help">Texto detalhado exibido na expansão do acontecimento.</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Fotografia Histórica Principal</label>
+        <input type="file" name="primary_image" class="form-control" accept="image/*">
+        {% if milestone.primary_image %}
+          <span class="form-help">Foto atual: <a href="{{ milestone.primary_image.url }}" target="_blank">Ver arquivo</a></span>
+        {% endif %}
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-top: 1rem; border-top: 1px solid var(--color-ivory-border); padding-top: 1.25rem;">
+        <div class="form-group">
+          <label class="form-label">Estado Editorial</label>
+          <select name="status" class="form-control">
+            {% for code, label in statuses %}
+              <option value="{{ code }}" {% if milestone.status == code %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group" style="display: flex; align-items: center; padding-top: 1.5rem;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; cursor: pointer;">
+            <input type="checkbox" name="is_featured" {% if milestone.is_featured %}checked{% endif %}>
+            <strong>Destacar na Página Inicial</strong>
+          </label>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+        <button type="submit" class="btn btn-gold">
+          Salvar Marco Histórico
+        </button>
+        <a href="{% url 'dashboard:milestones_list' %}" class="btn btn-outline">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends 'dashboard/base.html' %}
+
+{% block page_title %}{% if album %}Editar Álbum{% else %}Novo Álbum Fotográfico{% endif %}{% endblock %}
+
+{% block content %}
+<div style="max-width: 840px;">
+  <div style="margin-bottom: 2rem;">
+    <a href="{% url 'dashboard:albums_list' %}" style="font-size: 0.85rem; color: var(--color-gold); text-decoration: none;">
+      &larr; Voltar para a Lista de Álbuns
+    </a>
+    <h1 class="font-display" style="font-size: 1.6rem; color: var(--color-wine); margin-top: 0.5rem; margin-bottom: 0.35rem;">
+      {% if album %}Editar Álbum: {{ album.title }}{% else %}Novo Álbum Fotográfico{% endif %}
+    </h1>
+  </div>
+
+  <div class="dash-card">
+    <div class="dash-card-header">
+      <span class="dash-card-title">Informações do Álbum</span>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" style="padding: 1.75rem;">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label class="form-label">Título do Álbum *</label>
+        <input type="text" name="title" class="form-control" value="{{ album.title|default:'' }}" required>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 180px 1fr; gap: 1.25rem;">
+        <div class="form-group">
+          <label class="form-label">Ano Principal</label>
+          <input type="number" name="year" class="form-control" value="{{ album.year|default:'' }}" placeholder="Ex: 1984">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Categoria de Álbum</label>
+          <select name="category" class="form-control">
+            <option value="">Sem Categoria</option>
+            {% for cat in categories %}
+              <option value="{{ cat.id }}" {% if album.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Contexto e Descrição do Álbum *</label>
+        <textarea name="description" rows="3" class="form-control" required>{{ album.description|default:'' }}</textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Foto de Capa do Álbum</label>
+        <input type="file" name="cover_image" class="form-control" accept="image/*">
+        {% if album.cover_image %}
+          <span class="form-help">Capa atual: <a href="{{ album.cover_image.url }}" target="_blank">Ver foto</a></span>
+        {% endif %}
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; border-top: 1px solid var(--color-ivory-border); padding-top: 1.25rem;">
+        <div class="form-group">
+          <label class="form-label">Estado Editorial</label>
+          <select name="status" class="form-control">
+            {% for code, label in statuses %}
+              <option value="{{ code }}" {% if album.status == code %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group" style="display: flex; align-items: center; padding-top: 1.5rem;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; cursor: pointer;">
+            <input type="checkbox" name="is_historical_archive" {% if album.is_historical_archive %}checked{% endif %}>
+            <strong>Pertence ao Acervo Histórico (Décadas Passadas)</strong>
+          </label>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+        <button type="submit" class="btn btn-gold">
+          Salvar Álbum
+        </button>
+        <a href="{% url 'dashboard:albums_list' %}" class="btn btn-outline">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

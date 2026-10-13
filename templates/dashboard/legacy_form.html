@@ -1,0 +1,87 @@
+{% extends 'dashboard/base.html' %}
+
+{% block page_title %}Legado do Pastor Leonel{% endblock %}
+
+{% block content %}
+<div style="max-width: 860px;">
+  <div style="margin-bottom: 2rem;">
+    <h1 class="font-display" style="font-size: 1.6rem; color: var(--color-wine); margin-bottom: 0.35rem;">
+      Gerenciamento do Legado do Pastor Leonel
+    </h1>
+    <p style="color: var(--color-gray-doc); font-size: 0.9rem;">
+      Edição do perfil oficial, biografia, fotografia e princípios doutrinários que constituem o eixo narrativo do portal.
+    </p>
+  </div>
+
+  <div class="dash-card">
+    <div class="dash-card-header">
+      <span class="dash-card-title">Perfil e Registro Biográfico Oficial</span>
+    </div>
+    
+    <form method="post" enctype="multipart/form-data" style="padding: 1.75rem;">
+      {% csrf_token %}
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+        <div class="form-group">
+          <label class="form-label">Nome Completo Oficial</label>
+          <input type="text" name="full_name" class="form-control" value="{{ pastoral.full_name }}" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Título Pastoral</label>
+          <input type="text" name="title" class="form-control" value="{{ pastoral.title }}" required>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+        <div class="form-group">
+          <label class="form-label">Ano de Início do Ministério</label>
+          <input type="number" name="ministry_start_year" class="form-control" value="{{ pastoral.ministry_start_year }}" required>
+          <span class="form-help">Registro documentado (ex: 1970).</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Fotografia / Retrato Oficial</label>
+          <input type="file" name="portrait" class="form-control" accept="image/*">
+          {% if pastoral.portrait %}
+            <span class="form-help">Foto atual cadastrada: <a href="{{ pastoral.portrait.url }}" target="_blank">Ver imagem atual</a></span>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Legenda e Fonte do Retrato</label>
+        <input type="text" name="portrait_caption" class="form-control" value="{{ pastoral.portrait_caption }}">
+        <span class="form-help">Identifique a origem do registro histórico com rigor e respeito.</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Biografia Sintética / Introdução</label>
+        <textarea name="short_bio" rows="3" class="form-control" required>{{ pastoral.short_bio }}</textarea>
+        <span class="form-help">Apresentação concisa exibida na página inicial e nas aberturas editoriais.</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Biografia Histórica Completa</label>
+        <textarea name="full_biography" rows="8" class="form-control" required>{{ pastoral.full_biography }}</textarea>
+        <span class="form-help">Relato aprofundado da trajetória, primeiros cultos e consolidação da comunidade.</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Pilares Doutrinários e Princípios Ministeriais</label>
+        <textarea name="core_values" rows="4" class="form-control">{{ pastoral.core_values }}</textarea>
+        <span class="form-help">Valores transmitidos às próximas gerações do ministério.</span>
+      </div>
+
+      <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+        <button type="submit" class="btn btn-gold">
+          Salvar Alterações do Perfil Pastoral
+        </button>
+        <a href="{% url 'public:legacy' %}" target="_blank" class="btn btn-outline">
+          Pré-visualizar Página Pública &rarr;
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ item.title }} — {{ institutional.name }}{% endblock %}
+
+{% block content %}
+<section class="section-editorial">
+  <div class="container container-narrow">
+    <div style="margin-bottom: var(--space-xl);">
+      <a href="{% url 'public:media' %}" class="btn btn-sm btn-outline" style="margin-bottom: 1.5rem;">
+        &larr; Voltar para o Catálogo de Mensagens
+      </a>
+      <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem;">
+        <span class="badge-editorial">{{ item.preacher|default:"Pr. Leonel" }}</span>
+        {% if item.event_date %}
+          <span style="font-size: 0.8rem; color: var(--color-gray-doc);">{{ item.event_date|date:"d/m/Y" }}</span>
+        {% endif %}
+      </div>
+      <h1 class="font-display" style="font-size: 2.2rem; color: var(--color-wine); margin-bottom: 0.5rem; line-height: 1.2;">
+        {{ item.title }}
+      </h1>
+      {% if item.biblical_reference %}
+        <p style="font-size: 0.95rem; color: var(--color-gold); font-weight: 600; margin-bottom: 1rem;">
+          Referência Bíblica: {{ item.biblical_reference }}
+        </p>
+      {% endif %}
+    </div>
+
+    <!-- Player Incorporado Seguro do YouTube -->
+    <div style="position: relative; aspect-ratio: 16/9; background-color: #000; border: 1px solid var(--color-ivory-border); box-shadow: var(--shadow-card); margin-bottom: var(--space-2xl);">
+      {% if item.embed_url %}
+        <iframe src="{{ item.embed_url }}" 
+                title="{{ item.title }}" 
+                style="width: 100%; height: 100%; border: none;" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen></iframe>
+      {% else %}
+        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--color-ivory);">
+          <p>Identificador de vídeo pendente de configuração.</p>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Descrição e Sinopse -->
+    <div style="background-color: var(--color-white); border: 1px solid var(--color-ivory-border); padding: var(--space-2xl); box-shadow: var(--shadow-subtle); margin-bottom: var(--space-3xl);">
+      <h2 class="font-display" style="font-size: 1.35rem; color: var(--color-wine); margin-bottom: 1rem;">
+        Sinopse da Mensagem
+      </h2>
+      <div style="font-size: 0.98rem; line-height: 1.8; color: var(--color-gray-doc); white-space: pre-line;">
+        {{ item.description }}
+      </div>
+    </div>
+
+    <!-- Mensagens Relacionadas -->
+    {% if related_items %}
+      <div>
+        <h3 class="font-display" style="font-size: 1.3rem; color: var(--color-wine); margin-bottom: 1.25rem;">
+          Outras Mensagens do Acervo
+        </h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-lg);">
+          {% for rel in related_items %}
+            <div style="background-color: var(--color-white); border: 1px solid var(--color-ivory-border); padding: 1.25rem;">
+              <span style="font-size: 0.75rem; color: var(--color-gold); font-weight: 600; display: block; margin-bottom: 0.25rem;">{{ rel.preacher }}</span>
+              <h4 style="font-size: 1rem; color: var(--color-wine); margin-bottom: 0.4rem;">{{ rel.title }}</h4>
+              <a href="{% url 'public:media_detail' rel.slug %}" style="font-size: 0.8rem; color: var(--color-gold); text-decoration: underline;">
+                Assistir mensagem &rarr;
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

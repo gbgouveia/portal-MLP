@@ -1,0 +1,78 @@
+{% extends 'dashboard/base.html' %}
+
+{% block page_title %}Linha do Tempo Histórica{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+  <div>
+    <h1 class="font-display" style="font-size: 1.6rem; color: var(--color-wine); margin-bottom: 0.35rem;">
+      Marcos da Linha do Tempo Histórica
+    </h1>
+    <p style="color: var(--color-gray-doc); font-size: 0.9rem;">
+      Gerenciamento cronológico dos acontecimentos desde os anos 1970 até o presente.
+    </p>
+  </div>
+  <a href="{% url 'dashboard:milestone_create' %}" class="btn btn-gold">
+    + Novo Marco Histórico
+  </a>
+</div>
+
+<div class="dash-card">
+  <div class="dash-card-header">
+    <span class="dash-card-title">Marcos Históricos Cadastrados ({{ milestones.count }})</span>
+  </div>
+  <div style="padding: 0;">
+    <table class="dash-table">
+      <thead>
+        <tr>
+          <th>Ano / Data</th>
+          <th>Título do Acontecimento</th>
+          <th>Década</th>
+          <th>Estado</th>
+          <th>Destaque</th>
+          <th style="text-align: right;">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in milestones %}
+          <tr>
+            <td>
+              <strong style="color: var(--color-gold); font-size: 0.95rem;">{{ m.year }}</strong>
+              {% if m.approximate_date_display %}
+                <span style="font-size: 0.75rem; color: var(--color-gray-doc); display: block;">{{ m.approximate_date_display }}</span>
+              {% endif %}
+            </td>
+            <td>
+              <strong>{{ m.title }}</strong>
+              <p style="font-size: 0.8rem; color: var(--color-gray-doc); margin-top: 0.2rem;">{{ m.summary|truncatewords:12 }}</p>
+            </td>
+            <td><span class="badge-editorial" style="font-size: 0.7rem;">{{ m.decade }}</span></td>
+            <td>
+              <span class="badge-status status-{{ m.status }}">{{ m.get_status_display }}</span>
+            </td>
+            <td>
+              {% if m.is_featured %}
+                <span style="color: var(--color-gold); font-weight: 600; font-size: 0.8rem;">Sim (Home)</span>
+              {% else %}
+                <span style="color: var(--color-gray-light); font-size: 0.8rem;">Não</span>
+              {% endif %}
+            </td>
+            <td style="text-align: right; white-space: nowrap;">
+              <a href="{% url 'dashboard:milestone_edit' m.pk %}" class="btn btn-sm btn-outline">Editar</a>
+              {% if m.status != 'archived' %}
+                <a href="{% url 'dashboard:milestone_archive' m.pk %}" class="btn btn-sm btn-outline" style="color: #A83E38;" onclick="return confirm('Deseja realmente arquivar este marco histórico?');">Arquivar</a>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6" style="text-align: center; color: var(--color-gray-doc); padding: 2rem;">
+              Nenhum marco cadastrado. Clique no botão acima para adicionar.
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

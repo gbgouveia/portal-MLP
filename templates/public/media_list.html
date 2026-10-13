@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mensagens, Vídeos e Transmissões — {{ institutional.name }}{% endblock %}
+
+{% block content %}
+<section class="hero-editorial" style="padding: var(--space-3xl) 0 var(--space-2xl);">
+  <div class="container container-narrow" style="text-align: center;">
+    <span class="badge-editorial badge-dark" style="margin-bottom: 1rem;">Palavra & Edificação</span>
+    <h1 class="hero-title" style="font-size: 2.8rem; margin-bottom: 1rem;">
+      Mensagens & Gravações
+    </h1>
+    <p class="font-serif" style="font-size: 1.15rem; font-style: italic; color: var(--color-ivory-warm); line-height: 1.6;">
+      Estudos bíblicos, pregações das celebrações e transmissões oficiais do Ministério Luz da Palavra no YouTube.
+    </p>
+  </div>
+</section>
+
+<!-- Seção de Transmissão ao Vivo Confirmada -->
+{% if live_broadcast %}
+<section id="ao-vivo" class="section-editorial" style="background-color: var(--color-wine-darker); color: var(--color-ivory); border-bottom: 2px solid var(--color-gold);">
+  <div class="container container-narrow">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <span class="live-pulse" aria-hidden="true"></span>
+        <span class="badge-editorial badge-dark" style="color: #FF5252; border-color: #FF5252;">Transmissão ao Vivo Oficial</span>
+      </div>
+      <span style="font-size: 0.82rem; color: var(--color-gray-subtle);">Canal Oficial MLP</span>
+    </div>
+
+    <h2 class="font-display" style="font-size: 1.6rem; color: var(--color-ivory-warm); margin-bottom: 1rem;">
+      {{ live_broadcast.title }}
+    </h2>
+
+    <div style="position: relative; aspect-ratio: 16/9; background-color: #000; border: 1px solid rgba(165, 122, 34, 0.4); box-shadow: var(--shadow-elevated); margin-bottom: 1.25rem;">
+      {% if live_broadcast.embed_url %}
+        <iframe src="{{ live_broadcast.embed_url }}" 
+                title="{{ live_broadcast.title }}" 
+                style="width: 100%; height: 100%; border: none;" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen></iframe>
+      {% endif %}
+    </div>
+
+    <p style="font-size: 0.95rem; color: var(--color-gray-subtle); line-height: 1.6;">
+      {{ live_broadcast.description }}
+    </p>
+  </div>
+</section>
+{% endif %}
+
+<!-- Catálogo de Vídeos Anteriores -->
+<section class="section-editorial">
+  <div class="container">
+    {% if categories %}
+      <div style="display: flex; justify-content: center; gap: 0.75rem; margin-bottom: var(--space-2xl); flex-wrap: wrap;">
+        <a href="{% url 'public:media' %}" class="btn btn-sm {% if not selected_category %}btn-primary{% else %}btn-outline{% endif %}">
+          Todos os Vídeos
+        </a>
+        {% for cat in categories %}
+          <a href="{% url 'public:media' %}?categoria={{ cat.slug }}" class="btn btn-sm {% if selected_category == cat.slug %}btn-primary{% else %}btn-outline{% endif %}">
+            {{ cat.name }}
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: var(--space-xl);">
+      {% for item in media_items %}
+        <article style="background-color: var(--color-white); border: 1px solid var(--color-ivory-border); overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shadow-subtle);">
+          <a href="{% url 'public:media_detail' item.slug %}" style="display: block; position: relative; aspect-ratio: 16/9; background-color: #1A100E; overflow: hidden;">
+            {% if item.fallback_thumbnail_url %}
+              <img src="{{ item.fallback_thumbnail_url }}" alt="{{ item.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+            {% else %}
+              <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--color-gold);">
+                <span>Gravação MLP</span>
+              </div>
+            {% endif %}
+          </a>
+          <div style="padding: 1.25rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                <span class="badge-editorial">{{ item.preacher|default:"Pr. Leonel" }}</span>
+                {% if item.event_date %}
+                  <span style="font-size: 0.75rem; color: var(--color-gray-light);">{{ item.event_date|date:"d/m/Y" }}</span>
+                {% endif %}
+              </div>
+              <h3 style="font-size: 1.05rem; color: var(--color-wine); margin-bottom: 0.35rem;">
+                <a href="{% url 'public:media_detail' item.slug %}" style="text-decoration: none; color: inherit;">
+                  {{ item.title }}
+                </a>
+              </h3>
+              {% if item.biblical_reference %}
+                <p style="font-size: 0.8rem; color: var(--color-gold); font-weight: 500; margin-bottom: 0.5rem;">
+                  Texto Bíblico: {{ item.biblical_reference }}
+                </p>
+              {% endif %}
+              <p style="font-size: 0.84rem; color: var(--color-gray-doc); line-height: 1.5;">
+                {{ item.description|truncatewords:18 }}
+              </p>
+            </div>
+            <a href="{% url 'public:media_detail' item.slug %}" class="btn btn-sm btn-outline" style="margin-top: 1rem; align-self: flex-start;">
+              Assistir Estudo &rarr;
+            </a>
+          </div>
+        </article>
+      {% empty %}
+        <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: var(--color-white); border: 1px dashed var(--color-ivory-border);">
+          <p style="color: var(--color-gray-doc);">Nenhum vídeo publicado para a seleção atual.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

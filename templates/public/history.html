@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Nossa História Institucional — {{ institutional.name }}{% endblock %}
+
+{% block content %}
+<section class="hero-editorial">
+  <div class="container container-narrow text-center">
+    <span class="badge-editorial badge-dark section-badge">Trajetória Institucional</span>
+    <h1 class="hero-title">
+      Nossa História
+    </h1>
+    <p class="font-serif hero-quote" style="border: none; padding: 0;">
+      Uma congregação forjada na oração, enraizada na Palavra e comprometida com a fidelidade ao longo das décadas.
+    </p>
+  </div>
+</section>
+
+<section class="section-editorial">
+  <div class="container container-narrow">
+    <div class="history-origin-card">
+      <h2 class="font-display history-origin-title">
+        Origem e Fundamentação
+      </h2>
+      <div class="history-origin-body">
+        {{ history_page.body|default:institutional.history_summary }}
+      </div>
+    </div>
+
+    <!-- Departamentos e Ministérios -->
+    {% if departments %}
+    <div class="mb-3xl">
+      <div class="section-header-editorial text-left">
+        <span class="badge-editorial section-badge">Frentes Ministeriais</span>
+        <h3 class="section-title">Ministérios em Ação</h3>
+      </div>
+
+      <div class="departments-grid">
+        {% for d in departments %}
+          <div class="department-card">
+            <h4 class="department-title">{{ d.name }}</h4>
+            {% if d.leader_name %}
+              <p class="department-leader">Liderança: {{ d.leader_name }}</p>
+            {% endif %}
+            <p class="schedule-description">{{ d.description }}</p>
+            {% if d.meeting_info %}
+              <p class="department-meetings">
+                Reuniões: {{ d.meeting_info }}
+              </p>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Liderança Institucional Atual -->
+    {% if leaders %}
+    <div>
+      <div class="section-header-editorial text-left">
+        <span class="badge-editorial section-badge">Cuidado Pastoral</span>
+        <h3 class="section-title">Liderança Ministerial</h3>
+      </div>
+
+      <div class="leaders-grid">
+        {% for l in leaders %}
+          <div class="leader-card">
+            <div class="leader-avatar-wrap">
+              {% if l.photo %}
+                <img src="{{ l.photo.url }}" alt="{{ l.name }}">
+              {% else %}
+                <div class="leader-avatar-fallback">MLP</div>
+              {% endif %}
+            </div>
+            <strong class="leader-name">{{ l.name }}</strong>
+            <span class="leader-role">{{ l.role }}</span>
+            <p class="leader-bio">{{ l.biography }}</p>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

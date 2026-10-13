@@ -1,0 +1,106 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Painel MLP{% endblock %} — Ministério Luz da Palavra</title>
+  <link rel="stylesheet" href="{% static 'css/design-system.css' %}">
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <div class="dash-layout">
+    <!-- Sidebar Institucional -->
+    <aside class="dash-sidebar" role="navigation" aria-label="Menu administrativo">
+      <div class="dash-sidebar-header">
+        <div class="dash-sidebar-monogram">MLP</div>
+        <div>
+          <span class="dash-sidebar-title">Painel MLP</span>
+          <span class="dash-sidebar-sub">Gestão & Memória</span>
+        </div>
+      </div>
+
+      <nav class="dash-nav">
+        <a href="{% url 'dashboard:index' %}" class="dash-nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+          Visão Geral (Métricas)
+        </a>
+
+        <span class="dash-nav-section-title">Memória & Legado</span>
+        <a href="{% url 'dashboard:legacy_edit' %}" class="dash-nav-link {% if request.resolver_match.url_name == 'legacy_edit' %}active{% endif %}">
+          Legado do Pr. Leonel
+        </a>
+        <a href="{% url 'dashboard:milestones_list' %}" class="dash-nav-link {% if 'milestone' in request.resolver_match.url_name %}active{% endif %}">
+          Linha do Tempo (Marcos)
+        </a>
+        <a href="{% url 'dashboard:albums_list' %}" class="dash-nav-link {% if 'album' in request.resolver_match.url_name %}active{% endif %}">
+          Acervo Fotográfico
+        </a>
+
+        <span class="dash-nav-section-title">Vida da Igreja</span>
+        <a href="{% url 'dashboard:events_list' %}" class="dash-nav-link {% if 'event' in request.resolver_match.url_name %}active{% endif %}">
+          Eventos & Celebrações
+        </a>
+        <a href="{% url 'dashboard:media_list' %}" class="dash-nav-link {% if 'media' in request.resolver_match.url_name %}active{% endif %}">
+          Vídeos & Ao Vivo
+        </a>
+
+        <span class="dash-nav-section-title">Governança</span>
+        <a href="{% url 'dashboard:audit_list' %}" class="dash-nav-link {% if request.resolver_match.url_name == 'audit_list' %}active{% endif %}">
+          Trilha de Auditoria
+        </a>
+        {% if user.is_mlp_admin %}
+          <a href="{% url 'dashboard:users_list' %}" class="dash-nav-link {% if request.resolver_match.url_name == 'users_list' %}active{% endif %}">
+            Usuários & Papéis
+          </a>
+        {% endif %}
+      </nav>
+
+      <div class="dash-sidebar-footer">
+        <a href="{% url 'public:home' %}" style="color: var(--color-gold-light); text-decoration: none; font-size: 0.82rem; display: block; margin-bottom: 0.5rem;">
+          &larr; Ver Portal Público
+        </a>
+        <span>Sessão segura &bull; MLP v1.0</span>
+      </div>
+    </aside>
+
+    <!-- Área de Conteúdo -->
+    <div class="dash-main">
+      <header class="dash-topbar" role="banner">
+        <div class="dash-breadcrumbs">
+          Ministério Luz da Palavra &bull; <strong>{% block page_title %}Administração{% endblock %}</strong>
+        </div>
+
+        <div class="dash-user-bar">
+          <div class="dash-user-info">
+            <span class="dash-user-name">{{ user.get_full_name|default:user.username }}</span>
+            <span class="dash-user-role">{{ user.get_role_display }}</span>
+          </div>
+
+          <form action="{% url 'logout' %}" method="post" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.78rem;">
+              Sair
+            </button>
+          </form>
+        </div>
+      </header>
+
+      <!-- Mensagens / Feedback do Sistema -->
+      {% if messages %}
+        <div style="padding: 1rem 2rem 0;">
+          {% for msg in messages %}
+            <div style="padding: 0.75rem 1rem; border-radius: 2px; font-size: 0.88rem; margin-bottom: 0.5rem; background: {% if msg.tags == 'error' %}#FDE8E8; color: #9B1C1C; border-left: 4px solid #E02424;{% else %}#DEF7EC; color: #03543F; border-left: 4px solid #0E9F6E;{% endif %}">
+              {{ msg }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <main class="dash-content" role="main">
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+</body>
+</html>

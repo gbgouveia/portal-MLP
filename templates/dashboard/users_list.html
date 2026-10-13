@@ -1,0 +1,56 @@
+{% extends 'dashboard/base.html' %}
+
+{% block page_title %}Usuários & Permissões{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+  <h1 class="font-display" style="font-size: 1.6rem; color: var(--color-wine); margin-bottom: 0.35rem;">
+    Gestão de Usuários & Papéis de Acesso
+  </h1>
+  <p style="color: var(--color-gray-doc); font-size: 0.9rem;">
+    Controle baseado em funções pelo princípio do menor privilégio (administradores, editores, equipe de mídia, eventos e revisores).
+  </p>
+</div>
+
+<div class="dash-card">
+  <div class="dash-card-header">
+    <span class="dash-card-title">Operadores e Editores Autorizados ({{ users.count }})</span>
+  </div>
+  <div style="padding: 0;">
+    <table class="dash-table">
+      <thead>
+        <tr>
+          <th>Nome de Usuário</th>
+          <th>Nome Completo</th>
+          <th>E-mail</th>
+          <th>Função / Papel</th>
+          <th>Superusuário</th>
+          <th>Último Login</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+          <tr>
+            <td><strong>{{ u.username }}</strong></td>
+            <td>{{ u.get_full_name|default:"—" }}</td>
+            <td style="font-size: 0.82rem; color: var(--color-gray-doc);">{{ u.email }}</td>
+            <td>
+              <span class="badge-editorial" style="font-size: 0.72rem;">{{ u.get_role_display }}</span>
+            </td>
+            <td>
+              {% if u.is_superuser %}
+                <span style="color: #2E6B48; font-weight: 600; font-size: 0.8rem;">Sim</span>
+              {% else %}
+                <span style="color: var(--color-gray-light); font-size: 0.8rem;">Não</span>
+              {% endif %}
+            </td>
+            <td style="font-size: 0.78rem; color: var(--color-gray-doc);">
+              {{ u.last_login|date:"d/m/Y H:i"|default:"Nunca acessou" }}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
