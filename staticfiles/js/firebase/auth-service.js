@@ -3,6 +3,21 @@
  * Cadastro, login, LGPD, perfil com resize no browser e gestão de claims.
  */
 
+// Helper para resolver paths em GitHub Pages (/portal-MLP/) vs local (/)
+function getBasePath() {
+  const base = document.querySelector('base');
+  if (base && base.href) {
+    try { return new URL(base.href).pathname.replace(/\/$/, ''); } catch(e) {}
+  }
+  // Detecta sub-path pelo location
+  const match = window.location.pathname.match(/^\/([^/]+)/);
+  if (match && ['portal-MLP'].includes(match[1])) return '/' + match[1];
+  return '';
+}
+function resolvePath(path) {
+  return getBasePath() + path;
+}
+
 import { auth, db, storage, isConfigured } from "./config.js";
 import {
   createUserWithEmailAndPassword,
@@ -283,8 +298,8 @@ export function initHeaderAuthSync() {
                 <span class="site-header__user-role">${isAdmin ? "Administrador" : "Membro"}</span>
               </div>
               <hr class="site-header__divider">
-              <a href="/perfil/" class="site-header__dropdown-item">Meu Perfil</a>
-              ${isAdmin ? `<a href="/painel/" class="site-header__dropdown-item">Painel de Gestão</a>` : ""}
+              <a href="${resolvePath('/perfil/')}" class="site-header__dropdown-item">Meu Perfil</a>
+              ${isAdmin ? `<a href="${resolvePath('/painel/')}" class="site-header__dropdown-item">Painel de Gestão</a>` : ""}
               <hr class="site-header__divider">
               <button type="button" class="site-header__dropdown-item site-header__dropdown-item--danger" id="btn-logout-firebase" style="background:none; border:none; width:100%; text-align:left; cursor:pointer;">Sair</button>
             </div>
@@ -296,7 +311,7 @@ export function initHeaderAuthSync() {
         if (logoutBtn) {
           logoutBtn.addEventListener("click", async () => {
             await logoutMembro();
-            window.location.href = "/";
+            window.location.href = resolvePath("/");
           });
         }
       }
@@ -306,8 +321,8 @@ export function initHeaderAuthSync() {
           <div class="site-header__mobile-user-box">
             <span>Olá, <strong>${nome}</strong></span>
             <div class="site-header__mobile-user-links">
-              <a href="/perfil/">Meu Perfil</a>
-              ${isAdmin ? `<a href="/painel/">Painel Admin</a>` : ""}
+              <a href="${resolvePath('/perfil/')}">Meu Perfil</a>
+              ${isAdmin ? `<a href="${resolvePath('/painel/')}">Painel Admin</a>` : ""}
               <a href="#" id="btn-mobile-logout" style="color: #FF5252;">Sair</a>
             </div>
           </div>
@@ -328,8 +343,8 @@ export function initHeaderAuthSync() {
       if (authSlot) {
         authSlot.innerHTML = `
           <div class="site-header__guest-links">
-            <a href="/entrar/" class="site-header__btn-login">Entrar</a>
-            <a href="/cadastro/" class="site-header__btn-register">Cadastrar</a>
+            <a href="${resolvePath('/entrar/')}" class="site-header__btn-login">Entrar</a>
+            <a href="${resolvePath('/cadastro/')}" class="site-header__btn-register">Cadastrar</a>
           </div>
         `;
       }
@@ -337,8 +352,8 @@ export function initHeaderAuthSync() {
       if (mobileAccountSlot) {
         mobileAccountSlot.innerHTML = `
           <div class="site-header__mobile-auth-grid">
-            <a href="/entrar/" class="btn btn-outline-gold" style="width: 100%; text-align: center;">Entrar</a>
-            <a href="/cadastro/" class="btn btn-gold" style="width: 100%; text-align: center;">Cadastrar</a>
+            <a href="${resolvePath('/entrar/')}" class="btn btn-outline-gold" style="width: 100%; text-align: center;">Entrar</a>
+            <a href="${resolvePath('/cadastro/')}" class="btn btn-gold" style="width: 100%; text-align: center;">Cadastrar</a>
           </div>
         `;
       }

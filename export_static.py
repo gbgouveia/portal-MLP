@@ -72,7 +72,6 @@ def export_site(base_path='portal-MLP', output_dir='dist'):
     # 4. Mapeamento de rotas canônicas
     client = Client()
     routes = [
-        ('/', 'index.html'),
         (reverse('public:home'), 'index.html'),
         (reverse('public:legacy'), 'legado-pastor-leonel/index.html'),
         (reverse('public:history'), 'nossa-historia/index.html'),
@@ -80,6 +79,9 @@ def export_site(base_path='portal-MLP', output_dir='dist'):
         (reverse('public:gallery'), 'acervo-fotografico/index.html'),
         (reverse('public:media'), 'mensagens-e-ao-vivo/index.html'),
         (reverse('public:contact'), 'contato-e-horarios/index.html'),
+        (reverse('public:entrar'), 'entrar/index.html'),
+        (reverse('public:cadastro'), 'cadastro/index.html'),
+        (reverse('public:perfil'), 'perfil/index.html'),
     ]
 
     # Rotas dinâmicas do banco
@@ -106,19 +108,16 @@ def export_site(base_path='portal-MLP', output_dir='dist'):
         file_path = out / file_rel
         file_path.parent.mkdir(parents=True, exist_ok=True)
 
-        clean_url = url
-        prefix = f'/{base_path}' if base_path else ''
-        if prefix and clean_url.startswith(prefix):
-            clean_url = clean_url[len(prefix):] or '/'
-
-        resp = client.get(clean_url, SCRIPT_NAME=prefix)
+        # Com FORCE_SCRIPT_NAME ativo, reverse() já retorna URLs prefixadas.
+        # O test client espera a URL completa com o prefixo.
+        resp = client.get(url)
         if resp.status_code == 200:
             content = resp.content.decode('utf-8')
             with open(file_path, 'w', encoding='utf-8') as f:
                 f.write(content)
-            print(f"   [OK] [200 OK] {clean_url} -> {file_rel}")
+            print(f"   [OK] [200 OK] {url} -> {file_rel}")
         else:
-            print(f"   [AVISO] [ERRO {resp.status_code}] Falha ao exportar {url} (tentado {clean_url})")
+            print(f"   [AVISO] [ERRO {resp.status_code}] Falha ao exportar {url}")
 
     # Criação de 404.html amigável para o GitHub Pages
     home_file = out / 'index.html'

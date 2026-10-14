@@ -104,7 +104,8 @@
       const user = await loginMembro(email, senha);
       showAlert("Login realizado com sucesso! Redirecionando...", "success");
       setTimeout(() => {
-        window.location.href = "/perfil/";
+        const basePath = window.location.pathname.match(/^\/([^/]+)/) && ['portal-MLP'].includes(window.location.pathname.split('/')[1]) ? '/' + window.location.pathname.split('/')[1] : '';
+        window.location.href = basePath + "/perfil/";
       }, 1000);
     } catch (err) {
       console.error(err);

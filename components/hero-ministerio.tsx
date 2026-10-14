@@ -79,7 +79,8 @@ export function HeroMinisterio({
         images={effectiveImages}
         speed={4}
         {...preset}
-        className="h-[100vh] h-[100svh] min-h-[560px] w-full bg-[#080605]"
+        className="h-[100vh] h-[100svh] min-h-[560px] w-full bg-[#080605] relative"
+        style={{ height: "max(100svh, 560px)", minHeight: "560px" }}
       >
         {/* Fundo âmbar difuso */}
         <div
@@ -125,7 +126,7 @@ export function HeroMinisterio({
 
         {/* Retrato do pastor, à frente da galeria */}
         {portraitOk && (
-          <div className="pointer-events-none absolute inset-x-0 top-[9%] z-10 flex h-[70%] justify-center">
+          <div className="pointer-events-none absolute inset-x-0 top-[max(4.2rem,7%)] z-10 flex h-[62%] sm:h-[68%] justify-center">
             <img
               src={effectivePortrait}
               alt="Retrato do Pastor Leonel"
@@ -133,8 +134,11 @@ export function HeroMinisterio({
               className="h-full w-auto max-w-none select-none object-contain object-top"
               style={{
                 WebkitMaskImage:
-                  "linear-gradient(to bottom,#000 58%,transparent 100%)",
-                maskImage: "linear-gradient(to bottom,#000 58%,transparent 100%)",
+                  "radial-gradient(ellipse 52% 62% at 50% 40%, #000 55%, transparent 100%), linear-gradient(to bottom, #000 58%, transparent 100%)",
+                maskImage:
+                  "radial-gradient(ellipse 52% 62% at 50% 40%, #000 55%, transparent 100%), linear-gradient(to bottom, #000 58%, transparent 100%)",
+                WebkitMaskComposite: "source-in",
+                maskComposite: "intersect",
                 filter:
                   "drop-shadow(0 0 28px rgba(242,209,109,.28)) contrast(1.05)",
               }}
@@ -154,16 +158,19 @@ export function HeroMinisterio({
         />
 
         {/* Título */}
-        <div className="absolute inset-x-0 bottom-[10%] z-20 flex flex-col items-center px-4 text-center">
-          <span className="lp-sans text-[clamp(1.1rem,2.6vw,2.4rem)] font-light uppercase tracking-[.4em] sm:tracking-[.5em] pl-[.4em] sm:pl-[.5em] text-[#F2F1F0]">
+        <div
+          className="absolute inset-x-0 bottom-0 z-20 flex flex-col items-center px-4 text-center pointer-events-none"
+          style={{ paddingBottom: "max(5rem, calc(env(safe-area-inset-bottom, 0px) + 4.5rem))" }}
+        >
+          <span className="lp-sans text-[clamp(0.72rem,2.2vw,1.8rem)] font-light uppercase tracking-[.35em] sm:tracking-[.5em] pl-[.35em] sm:pl-[.5em] text-[#F2F1F0] drop-shadow-md">
             Ministério
           </span>
-          <h1 className="lp-serif lp-gold-text mt-1 text-[clamp(2.6rem,9vw,8.5rem)] font-medium leading-[1.05] drop-shadow-[0_6px_30px_rgba(0,0,0,.6)]">
+          <h1 className="lp-serif lp-gold-text mt-1 text-[clamp(1.85rem,7vw,7.5rem)] font-medium leading-[1.08] drop-shadow-[0_6px_30px_rgba(0,0,0,.7)] whitespace-nowrap max-w-full">
             Luz da Palavra
           </h1>
-          <div className="mt-1 flex w-full max-w-[min(90vw,60rem)] items-center justify-center gap-4 sm:gap-8">
+          <div className="mt-1 flex w-full max-w-[min(90vw,60rem)] items-center justify-center gap-3 sm:gap-6">
             <span aria-hidden className="hidden h-px flex-1 bg-gradient-to-r from-transparent to-[#F2D16D]/80 sm:block" />
-            <span className="lp-script lp-gold-text text-[clamp(1.9rem,4.6vw,4.2rem)] leading-tight">
+            <span className="lp-script lp-gold-text text-[clamp(1.35rem,4.2vw,3.6rem)] leading-tight whitespace-nowrap">
               Pastor Leonel
             </span>
             <span aria-hidden className="hidden h-px flex-1 bg-gradient-to-l from-transparent to-[#F2D16D]/80 sm:block" />
@@ -184,72 +191,13 @@ export function HeroMinisterio({
             }
           }}
           aria-label="Rolar para a próxima seção"
-          className="lp-focus absolute bottom-[2.5%] left-1/2 z-20 flex h-9 w-9 -translate-x-1/2 items-center justify-center rounded-full border border-[#F2D16D]/80 text-[#F2D16D] transition hover:bg-[#F2D16D]/10"
+          className="lp-focus absolute left-1/2 z-20 flex h-9 w-9 -translate-x-1/2 items-center justify-center rounded-full border border-[#F2D16D]/80 text-[#F2D16D] transition hover:bg-[#F2D16D]/10"
+          style={{ bottom: "max(16px, env(safe-area-inset-bottom, 0px))" }}
         >
           <ChevronDown className="h-5 w-5" />
         </a>
 
-        {/* Cabeçalho */}
-        <header className="absolute inset-x-0 top-0 z-30">
-          <nav
-            aria-label="Principal"
-            className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5 md:justify-center"
-          >
-            <ul className="lp-sans hidden items-center gap-10 text-[.95rem] tracking-wide text-[#F2F1F0] md:flex lg:gap-14">
-              {effectiveNav.map((item) => {
-                const active = item.href === effectiveActive;
-                return (
-                  <li key={item.href} className="relative">
-                    <a
-                      href={item.href}
-                      aria-current={active ? "page" : undefined}
-                      className={`lp-focus pb-2 transition-colors hover:text-[#F2D16D] ${active ? "text-[#F2D16D]" : ""}`}
-                    >
-                      {item.label}
-                    </a>
-                    {active && (
-                      <span aria-hidden className="absolute inset-x-0 -bottom-0.5 h-px bg-[#F2D16D] shadow-[0_0_8px_#F2D16D]" />
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-
-            <button
-              type="button"
-              className="lp-focus ml-auto rounded-full p-2 text-[#F2F1F0] md:hidden"
-              aria-expanded={menuOpen}
-              aria-controls="menu-movel"
-              aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
-              onClick={() => setMenuOpen((o) => !o)}
-            >
-              {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
-          </nav>
-
-          {menuOpen && (
-            <ul
-              id="menu-movel"
-              className="lp-sans mx-4 rounded-xl border border-[#F2D16D]/25 bg-[#080605]/95 p-3 text-[#F2F1F0] backdrop-blur md:hidden"
-            >
-              {effectiveNav.map((item) => {
-                const active = item.href === effectiveActive;
-                return (
-                  <li key={item.href}>
-                    <a
-                      href={item.href}
-                      aria-current={active ? "page" : undefined}
-                      onClick={() => setMenuOpen(false)}
-                      className={`lp-focus block rounded-lg px-4 py-3 ${active ? "text-[#F2D16D]" : "hover:text-[#F2D16D]"}`}
-                    >
-                      {item.label}
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </header>
+        {/* Cabeçalho interno removido: a navegação principal é gerenciada exclusivamente pelo Cabeçalho Oficial Fixo do Portal */}
       </TiltedGridHero>
     </section>
   );

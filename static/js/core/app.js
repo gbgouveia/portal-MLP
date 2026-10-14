@@ -28,39 +28,50 @@ document.addEventListener('DOMContentLoaded', () => {
   handleScroll(); // Checagem inicial
 
   // 2. Menu Móvel (< 1024px) com Acessibilidade e Focus Trap
-  const toggleBtn = document.getElementById('site-header-toggle');
-  const mobilePanel = document.getElementById('site-mobile-panel');
-  const closeBtn = document.getElementById('site-mobile-close');
+  const toggleBtn = document.getElementById('menu-btn') || document.getElementById('site-header-toggle');
+  const mobilePanel = document.getElementById('menu-movel') || document.getElementById('site-mobile-panel');
+  const closeBtn = document.getElementById('mobile-menu-close') || document.getElementById('site-mobile-close');
   const backdrop = document.getElementById('site-mobile-backdrop');
-  const mobileLinks = document.querySelectorAll('.site-header__mobile-link, .site-header__mobile-cta, .site-header__mobile-user-links a');
+  const mobileLinks = document.querySelectorAll(
+    '.mobile-menu__link, .mobile-menu__cta, .mobile-menu__auth-grid a, .mobile-menu__user-links a, ' +
+    '.site-header__mobile-link, .site-header__mobile-cta, .site-header__mobile-user-links a'
+  );
 
   if (toggleBtn && mobilePanel) {
     const focusableSelectors = 'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
+    const isMenuOpen = () => {
+      return !mobilePanel.hasAttribute('hidden') && (mobilePanel.classList.contains('is-open') || getComputedStyle(mobilePanel).display !== 'none');
+    };
+
     const openMobileMenu = () => {
       toggleBtn.setAttribute('aria-expanded', 'true');
+      toggleBtn.classList.add('is-open');
+      mobilePanel.removeAttribute('hidden');
       mobilePanel.setAttribute('aria-hidden', 'false');
       mobilePanel.classList.add('is-open');
       document.body.style.overflow = 'hidden';
 
-      // Focus no primeiro item interativo dentro do painel
-      const firstFocusable = mobilePanel.querySelector(focusableSelectors);
-      if (firstFocusable) {
-        setTimeout(() => firstFocusable.focus(), 50);
+      // Foco vai para o botão fechar ou primeiro item interativo dentro do painel
+      const targetFocus = closeBtn || mobilePanel.querySelector(focusableSelectors);
+      if (targetFocus) {
+        setTimeout(() => targetFocus.focus(), 60);
       }
     };
 
     const closeMobileMenu = () => {
       toggleBtn.setAttribute('aria-expanded', 'false');
+      toggleBtn.classList.remove('is-open');
+      mobilePanel.setAttribute('hidden', '');
       mobilePanel.setAttribute('aria-hidden', 'true');
       mobilePanel.classList.remove('is-open');
       document.body.style.overflow = '';
-      toggleBtn.focus(); // Devolve foco ao botão
+      toggleBtn.focus(); // Devolve foco ao botão que disparou
     };
 
-    toggleBtn.addEventListener('click', () => {
-      const isOpen = mobilePanel.classList.contains('is-open');
-      if (isOpen) {
+    toggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (isMenuOpen()) {
         closeMobileMenu();
       } else {
         openMobileMenu();
@@ -68,21 +79,43 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (closeBtn) {
-      closeBtn.addEventListener('click', closeMobileMenu);
+      closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeMobileMenu();
+      });
     }
 
     if (backdrop) {
       backdrop.addEventListener('click', closeMobileMenu);
+      backdrop.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        closeMobileMenu();
+      });
     }
+
+    mobilePanel.addEventListener('click', (e) => {
+      if (e.target === mobilePanel) {
+        closeMobileMenu();
+      }
+    });
 
     // Fechar ao clicar em qualquer link de navegação do menu móvel
     mobileLinks.forEach(link => {
-      link.addEventListener('click', closeMobileMenu);
+      link.addEventListener('click', () => {
+        closeMobileMenu();
+      });
     });
 
-    // Fechar com ESC e Focus Trap (Tab / Shift+Tab)
+    // Auto-fechar ao redimensionar para tela desktop (>= 1024px)
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 1024 && isMenuOpen()) {
+        closeMobileMenu();
+      }
+    });
+
+    // Fechar com ESC e Focus Trap estrito (Tab / Shift+Tab)
     document.addEventListener('keydown', (e) => {
-      if (!mobilePanel.classList.contains('is-open')) return;
+      if (!isMenuOpen()) return;
 
       if (e.key === 'Escape') {
         e.preventDefault();
@@ -91,19 +124,20 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (e.key === 'Tab') {
-        const focusables = Array.from(mobilePanel.querySelectorAll(focusableSelectors));
+        const focusables = Array.from(mobilePanel.querySelectorAll(focusableSelectors))
+          .filter(el => el.offsetWidth > 0 || el.offsetHeight > 0);
         if (focusables.length === 0) return;
 
         const firstElement = focusables[0];
         const lastElement = focusables[focusables.length - 1];
 
         if (e.shiftKey) {
-          if (document.activeElement === firstElement) {
+          if (document.activeElement === firstElement || !mobilePanel.contains(document.activeElement)) {
             e.preventDefault();
             lastElement.focus();
           }
         } else {
-          if (document.activeElement === lastElement) {
+          if (document.activeElement === lastElement || !mobilePanel.contains(document.activeElement)) {
             e.preventDefault();
             firstElement.focus();
           }
