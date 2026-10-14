@@ -1,0 +1,97 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Funções auxiliares de autorização
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.admin == true ||
+        request.auth.token.role == 'admin'
+      );
+    }
+    
+    // Coleção membros/{uid}
+    // Membro lê e edita SOMENTE o próprio documento.
+    // Nunca altera papel ou status de outro usuário ou dele próprio.
+    match /membros/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      
+      // Criação inicial (auto-cadastro pelo próprio usuário)
+      allow create: if isOwner(uid) 
+        && request.resource.data.status == 'ativo'
+        && (!('admin' in request.resource.data))
+        && (!('role' in request.resource.data));
+      
+      // Atualização: o próprio dono pode atualizar dados básicos, mas não pode alterar status ou promover a si mesmo
+      allow update: if (isOwner(uid) 
+        && request.resource.data.status == resource.data.status
+        && (!('role' in request.resource.data) || request.resource.data.role == resource.data.role)
+        && (!('admin' in request.resource.data) || request.resource.data.admin == resource.data.admin))
+        || isAdmin();
+        
+      allow delete: if isOwner(uid) || isAdmin();
+    }
+    
+    // Coleção avisos/{id}
+    // Leitura: pública se publicado == true, ou qualquer autenticado
+    // Escrita: exclusivamente admin
+    match /avisos/{id} {
+      allow read: if (resource.data.publicado == true) || isAuthenticated();
+      allow write: if isAdmin();
+    }
+    
+    // Coleção notificacoes/{id}
+    // Broadcast para o sininho
+    match /notificacoes/{id} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    
+    // Coleção lidas/{uid}/itens/{notificacaoId}
+    // Histórico de leitura individual por membro
+    match /lidas/{uid}/itens/{notificacaoId} {
+      allow read, write: if isOwner(uid) || isAdmin();
+    }
+    
+    // Coleção galeria/{id}
+    // Leitura pública
+    // Escrita exclusivamente admin
+    match /galeria/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Coleção live/atual
+    // Leitura pública (para visitantes e membros verem status da live)
+    // Escrita apenas admin ou Cloud Functions
+    match /live/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Coleção config/whatsapp
+    match /config/whatsapp {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    
+    // Coleção envios/{id}
+    // Registro de envios do WhatsApp
+    match /envios/{id} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Bloqueia qualquer outro documento não previsto
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

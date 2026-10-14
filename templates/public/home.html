@@ -13,23 +13,21 @@
 
 
 <!-- 2. Alerta de Transmissão ao Vivo Confirmada (apenas se houver live real) -->
-{% if live_broadcast %}
-<div class="live-stream-bar" role="region" aria-label="Transmissão ao vivo">
+<div id="top-live-banner" class="live-stream-bar" role="region" aria-label="Transmissão ao vivo" style="{% if not live_broadcast %}display: none;{% endif %}">
   <div class="container live-stream-inner">
     <div style="display: flex; align-items: center; gap: 0.85rem;">
       <span class="live-pulse" aria-hidden="true"></span>
       <span class="live-indicator">Ao Vivo no YouTube:</span>
-      <strong style="color: var(--color-ivory-warm); font-size: 0.92rem;">{{ live_broadcast.title }}</strong>
+      <strong id="top-live-title" style="color: var(--color-ivory-warm); font-size: 0.92rem;">{{ live_broadcast.title|default:"Culto ao Vivo" }}</strong>
     </div>
-    <a href="{% url 'public:media_detail' live_broadcast.slug %}" class="btn btn-sm btn-gold">
+    <a href="#transmissoes" class="btn btn-sm btn-gold">
       Assistir Transmissão Oficial
     </a>
   </div>
 </div>
-{% endif %}
 
 <!-- 3. Eixo Narrativo: O Legado Pastoral que Atravessa Gerações -->
-<section id="next-section" class="section-editorial bg-ivory-warm">
+<section id="ministerio" class="section-editorial bg-ivory-warm">
   <div class="container">
     <div class="section-header-editorial">
       <span class="badge-editorial section-badge">Eixo Narrativo Central</span>
@@ -84,7 +82,7 @@
 </section>
 
 <!-- 4. Cultos e Horários de Encontro Comunitário -->
-<section class="section-editorial">
+<section id="cultos" class="section-editorial">
   <div class="container">
     <div class="section-header-editorial">
       <span class="badge-editorial section-badge">Vida Comunitária</span>
@@ -122,15 +120,75 @@
   </div>
 </section>
 
-<!-- 5. Biblioteca Audiovisual e Mensagens Recentes -->
-<section class="section-editorial bg-wine-deep">
+<!-- 4.1. Quadro Comunitário de Avisos Oficiais -->
+<section id="avisos" class="section-editorial bg-ivory-warm">
+  <div class="container">
+    <div class="section-header-editorial">
+      <span class="badge-editorial section-badge">Comunicação Oficial</span>
+      <h2 class="section-title">Quadro de Avisos</h2>
+      <p class="section-subtitle">
+        Comunicados oficiais, eventos e informativos do Ministério Luz da Palavra.
+      </p>
+    </div>
+
+    <div id="home-avisos-container" class="avisos-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+      <!-- Avisos carregados dinamicamente via Firestore / fallback local -->
+      <div class="aviso-card aviso-card--destaque" style="background: #FFF; border: 1px solid rgba(191, 135, 31, 0.3); border-radius: 8px; padding: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 4px solid #BF871F;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+          <span class="badge-editorial" style="background: rgba(191, 135, 31, 0.15); color: #8C4303; border-color: #BF871F;">Geral</span>
+          <span style="font-size: 0.78rem; color: #8C4303; font-weight: 600;">Fixado</span>
+        </div>
+        <h3 class="font-display" style="font-size: 1.2rem; color: #100904; margin-bottom: 0.5rem;">Bem-vindo ao Portal Oficial MLP</h3>
+        <p style="font-size: 0.92rem; color: #555; line-height: 1.6; margin-bottom: 1rem;">
+          Fique por dentro das programações dos cultos, transmissões ao vivo e do acervo documental do legado pastoral.
+        </p>
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: #888;">
+          <span>Secretaria MLP</span>
+          <a href="/avisos/" style="color: #BF871F; text-decoration: none; font-weight: 600;">Ver todos &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Biblioteca Audiovisual e Transmissões Oficiais -->
+<section id="mensagens" class="section-editorial bg-wine-deep">
   <div class="container">
     <div class="section-header-editorial">
       <span class="badge-editorial badge-dark section-badge">Canal Oficial</span>
-      <h2 class="section-title text-ivory-warm">Palavra & Pregações</h2>
+      <h2 class="section-title text-ivory-warm">Palavra & Transmissões</h2>
       <p class="section-subtitle text-gray-subtle">
-        Acesse os estudos bíblicos e ministrações gravadas do Ministério Luz da Palavra.
+        Acesse os estudos bíblicos, ministrações gravadas e as transmissões das celebrações.
       </p>
+    </div>
+
+    <!-- Bloco de Transmissão Principal (Ao Vivo ou Última Transmissão Oficial) -->
+    <div id="transmissoes" class="featured-transmission-box" style="margin-bottom: var(--space-3xl); background: rgba(16, 9, 4, 0.75); border: 1px solid rgba(242, 209, 109, 0.3); border-radius: 8px; padding: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div id="live-status-indicator" style="display: {% if live_broadcast %}flex{% else %}none{% endif %}; align-items: center; gap: 0.5rem;">
+            <span class="live-pulse" aria-hidden="true"></span>
+            <span class="badge-editorial" style="background: #E53935; color: #FFF; border-color: #E53935; font-weight: 700; letter-spacing: 0.08em;">AO VIVO</span>
+          </div>
+          <span id="recorded-status-indicator" class="badge-editorial badge-dark" style="display: {% if live_broadcast %}none{% else %}inline-block{% endif %};">Última Transmissão</span>
+          <h3 id="transmission-title" class="font-display" style="font-size: 1.25rem; color: var(--color-ivory-warm); margin: 0;">
+            {% if live_broadcast %}{{ live_broadcast.title }}{% elif latest_broadcast %}{{ latest_broadcast.title }}{% else %}Culto Oficial — Ministério Luz da Palavra{% endif %}
+          </h3>
+        </div>
+        <a href="https://www.youtube.com/@MLPBRASILIA-DF" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-light" style="border-color: rgba(242, 209, 109, 0.4); color: #F2D16D;">
+          Ver canal no YouTube &rarr;
+        </a>
+      </div>
+
+      <div id="transmission-player-mount">
+        {% if live_broadcast %}
+          {% include 'components/stream_player.html' with video_id=live_broadcast.youtube_video_id title=live_broadcast.title is_live=True %}
+        {% elif latest_broadcast %}
+          {% include 'components/stream_player.html' with video_id=latest_broadcast.youtube_video_id title=latest_broadcast.title is_live=False %}
+        {% else %}
+          {% include 'components/stream_player.html' with video_id='f6ArFvSPlkw' title='Culto Oficial MLP' is_live=False %}
+        {% endif %}
+      </div>
     </div>
 
     <div class="media-grid">
@@ -173,7 +231,7 @@
 </section>
 
 <!-- 6. Acervo Fotográfico Documental -->
-<section class="section-editorial">
+<section id="galeria" class="section-editorial">
   <div class="container">
     <div class="section-header-editorial">
       <span class="badge-editorial section-badge">Patrimônio Visual</span>

@@ -32,14 +32,8 @@
       {{ live_broadcast.title }}
     </h2>
 
-    <div style="position: relative; aspect-ratio: 16/9; background-color: #000; border: 1px solid rgba(165, 122, 34, 0.4); box-shadow: var(--shadow-elevated); margin-bottom: 1.25rem;">
-      {% if live_broadcast.embed_url %}
-        <iframe src="{{ live_broadcast.embed_url }}" 
-                title="{{ live_broadcast.title }}" 
-                style="width: 100%; height: 100%; border: none;" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowfullscreen></iframe>
-      {% endif %}
+    <div style="margin-bottom: 1.25rem;">
+      {% include 'components/stream_player.html' with video_id=live_broadcast.youtube_video_id embed_url=live_broadcast.embed_url title=live_broadcast.title is_live=True %}
     </div>
 
     <p style="font-size: 0.95rem; color: var(--color-gray-subtle); line-height: 1.6;">

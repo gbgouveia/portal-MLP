@@ -115,24 +115,22 @@ class MLPPublicRouteTests(TestCase):
         self.assertContains(response, 'Contato & Localização')
 
     def test_mac_os_dock_renders_canonical_routes(self):
+        """Verifica que o dock flutuante foi desativado e o cabeçalho oficial renderiza as rotas canônicas."""
         response = self.client.get(reverse('public:home'))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'mlp-dock')
+        self.assertNotContains(response, 'mlp-dock')
+        self.assertContains(response, 'site-header')
         self.assertContains(response, reverse('public:home'))
-        self.assertContains(response, reverse('public:history'))
         self.assertContains(response, reverse('public:legacy'))
-        self.assertContains(response, reverse('public:events'))
-        self.assertContains(response, reverse('public:gallery'))
         self.assertContains(response, reverse('public:media'))
+        self.assertContains(response, reverse('public:gallery'))
         self.assertContains(response, reverse('public:contact'))
 
-    def test_hero_section_2_split_screen_renders(self):
+    def test_hero_cinematic_3d_renders(self):
         response = self.client.get(reverse('public:home'))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'hero-section-2')
-        self.assertContains(response, 'hero-reveal-mask')
-        self.assertContains(response, 'hero-stats-strip')
-        self.assertContains(response, '+50')
+        self.assertContains(response, 'tilted-grid-hero-root')
+        self.assertContains(response, 'Pastor Leonel')
 
 
 

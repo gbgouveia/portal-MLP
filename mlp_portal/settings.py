@@ -55,6 +55,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'apps.core.middleware.SecurityHeadersMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -79,6 +80,7 @@ TEMPLATES = [
                 'django.template.context_processors.media',
                 'django.template.context_processors.static',
                 'apps.institutional.context_processors.institutional_settings_context',
+                'apps.core.context_processors.firebase_config_context',
             ],
         },
     },
@@ -157,6 +159,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/painel/login/'
 LOGIN_REDIRECT_URL = '/painel/'
 LOGOUT_REDIRECT_URL = '/painel/login/'
+
+# Security & Referrer Policy Settings
+SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
 
 # Security Settings for Production
 if not DEBUG:

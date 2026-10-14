@@ -1,56 +1,131 @@
 {% extends 'dashboard/base.html' %}
 
-{% block page_title %}Usuários & Permissões{% endblock %}
+{% block page_title %}Membros & Usuários — Painel MLP{% endblock %}
 
 {% block content %}
-<div style="margin-bottom: 2rem;">
-  <h1 class="font-display" style="font-size: 1.6rem; color: var(--color-wine); margin-bottom: 0.35rem;">
-    Gestão de Usuários & Papéis de Acesso
-  </h1>
-  <p style="color: var(--color-gray-doc); font-size: 0.9rem;">
-    Controle baseado em funções pelo princípio do menor privilégio (administradores, editores, equipe de mídia, eventos e revisores).
-  </p>
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+  <div>
+    <h1 class="font-display" style="font-size: 1.6rem; color: var(--color-wine); margin-bottom: 0.35rem;">
+      Gestão de Irmãos & Usuários
+    </h1>
+    <p style="color: var(--color-gray-doc); font-size: 0.9rem; margin: 0;">
+      Pesquisa, ativação/desativação e exportação oficial de membros da congregação.
+    </p>
+  </div>
+  
+  <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+    <a href="{% url 'dashboard:users_export_csv' %}" class="btn btn-sm btn-outline" style="border-color: var(--color-gold); color: var(--color-gold);">
+      Exportar CSV (Excel)
+    </a>
+  </div>
 </div>
 
+<!-- Barra de Filtros e Busca -->
+<div class="dash-card" style="margin-bottom: 1.5rem; padding: 1.25rem;">
+  <form method="GET" action="{% url 'dashboard:users_list' %}" style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;">
+    <div style="flex: 1; min-width: 240px;">
+      <input type="text" 
+             name="q" 
+             value="{{ search }}" 
+             placeholder="Buscar por nome, e-mail ou telefone..." 
+             class="form-control"
+             style="width: 100%; min-height: 40px; padding: 0.5rem 0.85rem; font-size: 15px; border: 1px solid var(--color-ivory-border); border-radius: 6px;">
+    </div>
+    
+    <div style="min-width: 160px;">
+      <select name="status" class="form-control" style="width: 100%; min-height: 40px; padding: 0.5rem 0.85rem; font-size: 15px; border: 1px solid var(--color-ivory-border); border-radius: 6px;">
+        <option value="">Todos os Status</option>
+        <option value="ativo" {% if status_filter == 'ativo' %}selected{% endif %}>Apenas Ativos</option>
+        <option value="inativo" {% if status_filter == 'inativo' %}selected{% endif %}>Apenas Inativos</option>
+      </select>
+    </div>
+
+    <div>
+      <button type="submit" class="btn btn-sm btn-gold">Filtrar</button>
+      {% if search or status_filter %}
+        <a href="{% url 'dashboard:users_list' %}" class="btn btn-sm btn-outline" style="margin-left: 0.25rem;">Limpar</a>
+      {% endif %}
+    </div>
+  </form>
+</div>
+
+<!-- Tabela de Membros -->
 <div class="dash-card">
-  <div class="dash-card-header">
-    <span class="dash-card-title">Operadores e Editores Autorizados ({{ users.count }})</span>
+  <div class="dash-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <span class="dash-card-title">Irmãos Cadastrados ({{ total_count }})</span>
   </div>
-  <div style="padding: 0;">
-    <table class="dash-table">
+  <div style="padding: 0; overflow-x: auto;">
+    <table class="dash-table" style="width: 100%; min-width: 700px;">
       <thead>
         <tr>
-          <th>Nome de Usuário</th>
           <th>Nome Completo</th>
           <th>E-mail</th>
-          <th>Função / Papel</th>
-          <th>Superusuário</th>
-          <th>Último Login</th>
+          <th>Telefone</th>
+          <th>Papel</th>
+          <th>Status</th>
+          <th>Data de Entrada</th>
+          <th style="text-align: right;">Ações</th>
         </tr>
       </thead>
       <tbody>
         {% for u in users %}
           <tr>
-            <td><strong>{{ u.username }}</strong></td>
-            <td>{{ u.get_full_name|default:"—" }}</td>
-            <td style="font-size: 0.82rem; color: var(--color-gray-doc);">{{ u.email }}</td>
+            <td>
+              <strong>{{ u.get_full_name|default:u.username }}</strong>
+              <div style="font-size: 0.75rem; color: var(--color-gray-doc);">@{{ u.username }}</div>
+            </td>
+            <td style="font-size: 0.85rem; color: var(--color-gray-doc);">{{ u.email }}</td>
+            <td style="font-size: 0.85rem; color: var(--color-gray-doc);">{{ u.phone|default:"—" }}</td>
             <td>
               <span class="badge-editorial" style="font-size: 0.72rem;">{{ u.get_role_display }}</span>
             </td>
             <td>
-              {% if u.is_superuser %}
-                <span style="color: #2E6B48; font-weight: 600; font-size: 0.8rem;">Sim</span>
+              {% if u.is_active %}
+                <span class="badge-editorial" style="background: #E8F5E9; color: #2E7D32; border-color: #A5D6A7; font-size: 0.72rem;">Ativo</span>
               {% else %}
-                <span style="color: var(--color-gray-light); font-size: 0.8rem;">Não</span>
+                <span class="badge-editorial" style="background: #FFEBEE; color: #C62828; border-color: #FFCDD2; font-size: 0.72rem;">Inativo</span>
               {% endif %}
             </td>
-            <td style="font-size: 0.78rem; color: var(--color-gray-doc);">
-              {{ u.last_login|date:"d/m/Y H:i"|default:"Nunca acessou" }}
+            <td style="font-size: 0.8rem; color: var(--color-gray-doc);">
+              {{ u.date_joined|date:"d/m/Y H:i" }}
+            </td>
+            <td style="text-align: right;">
+              {% if u.id != request.user.id %}
+                <a href="{% url 'dashboard:user_toggle_status' u.pk %}" 
+                   class="btn btn-sm {% if u.is_active %}btn-outline{% else %}btn-gold{% endif %}"
+                   style="font-size: 0.78rem; padding: 0.25rem 0.65rem;"
+                   onclick="return confirm('Confirma alterar status de {{ u.username }}?');">
+                  {% if u.is_active %}Desativar{% else %}Ativar{% endif %}
+                </a>
+              {% else %}
+                <span style="font-size: 0.78rem; color: #999;">(Você)</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 2rem; color: var(--color-gray-doc);">
+              Nenhum membro encontrado com os filtros aplicados.
             </td>
           </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
+
+  <!-- Paginação -->
+  {% if users.has_other_pages %}
+    <div style="display: flex; justify-content: center; gap: 0.5rem; padding: 1.25rem; border-top: 1px solid var(--color-ivory-border);">
+      {% if users.has_previous %}
+        <a href="?page={{ users.previous_page_number }}{% if search %}&q={{ search }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="btn btn-sm btn-outline">&larr; Anterior</a>
+      {% endif %}
+      <span style="align-self: center; font-size: 0.85rem; color: var(--color-gray-doc);">
+        Página {{ users.number }} de {{ users.paginator.num_pages }}
+      </span>
+      {% if users.has_next %}
+        <a href="?page={{ users.next_page_number }}{% if search %}&q={{ search }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="btn btn-sm btn-outline">Próxima &rarr;</a>
+      {% endif %}
+    </div>
+  {% endif %}
 </div>
 {% endblock %}

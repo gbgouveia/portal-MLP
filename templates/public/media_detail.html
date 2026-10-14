@@ -27,18 +27,8 @@
     </div>
 
     <!-- Player Incorporado Seguro do YouTube -->
-    <div style="position: relative; aspect-ratio: 16/9; background-color: #000; border: 1px solid var(--color-ivory-border); box-shadow: var(--shadow-card); margin-bottom: var(--space-2xl);">
-      {% if item.embed_url %}
-        <iframe src="{{ item.embed_url }}" 
-                title="{{ item.title }}" 
-                style="width: 100%; height: 100%; border: none;" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowfullscreen></iframe>
-      {% else %}
-        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--color-ivory);">
-          <p>Identificador de vídeo pendente de configuração.</p>
-        </div>
-      {% endif %}
+    <div style="margin-bottom: var(--space-2xl);">
+      {% include 'components/stream_player.html' with video_id=item.youtube_video_id embed_url=item.embed_url title=item.title is_live=item.is_live %}
     </div>
 
     <!-- Descrição e Sinopse -->

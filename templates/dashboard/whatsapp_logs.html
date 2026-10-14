@@ -1,0 +1,140 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block page_title %}Automação WhatsApp Business — Painel MLP{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+  <h1 class="font-display" style="font-size: 1.6rem; color: var(--color-wine); margin-bottom: 0.35rem;">
+    Automação WhatsApp Business Oficial (Meta Cloud API)
+  </h1>
+  <p style="color: var(--color-gray-doc); font-size: 0.9rem; margin: 0;">
+    Disparo oficial em lote com respeito rigoroso à LGPD, verificação de consentimento e opt-out automático.
+  </p>
+</div>
+
+<!-- Card de Custos e Status Operacional -->
+<div class="dash-grid-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+  <div class="dash-stat-card" style="border-left: 4px solid #25D366;">
+    <span class="dash-stat-label">Canal Oficial Meta Cloud API</span>
+    <strong class="dash-stat-value" style="font-size: 1.25rem; color: #25D366;">Conexão Oficial</strong>
+    <p style="font-size: 0.8rem; color: var(--color-gray-doc); margin-top: 0.5rem;">
+      Número empresarial homologado. Sem risco de banimento ou bloqueio.
+    </p>
+  </div>
+
+  <div class="dash-stat-card" style="border-left: 4px solid var(--color-gold);">
+    <span class="dash-stat-label">Modelos Cadastrados (Templates)</span>
+    <strong class="dash-stat-value" style="font-size: 1.25rem;">2 Modelos</strong>
+    <p style="font-size: 0.8rem; color: var(--color-gray-doc); margin-top: 0.5rem;">
+      <code>aviso_live</code> e <code>novo_aviso</code> (Categoria: Utilidade).
+    </p>
+  </div>
+
+  <div class="dash-stat-card" style="border-left: 4px solid #8C4303;">
+    <span class="dash-stat-label">Custos & Tarifação</span>
+    <strong class="dash-stat-value" style="font-size: 1.25rem;">Pay-as-you-go</strong>
+    <p style="font-size: 0.8rem; color: var(--color-gray-doc); margin-top: 0.5rem;">
+      Cobrado por mensagem iniciada pela empresa pela Meta. Firebase requer plano Blaze para Cloud Functions.
+    </p>
+  </div>
+</div>
+
+<!-- Modelos Aprovados pela Meta -->
+<div class="dash-card" style="margin-bottom: 2rem;">
+  <div class="dash-card-header">
+    <span class="dash-card-title">Modelos Aprovados na Meta Business (pt-BR)</span>
+  </div>
+  <div style="padding: 1.25rem;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem;">
+      <div style="background: var(--color-ivory-warm); border: 1px solid var(--color-ivory-border); border-radius: 6px; padding: 1rem;">
+        <span class="badge-editorial" style="font-size: 0.72rem; margin-bottom: 0.5rem;">Modelo 1: Transmissão ao Vivo</span>
+        <strong style="display: block; font-size: 0.9rem; margin-bottom: 0.5rem;">aviso_live</strong>
+        <p style="font-size: 0.84rem; color: #444; font-style: italic; background: #FFF; padding: 0.75rem; border-radius: 4px; border: 1px dashed #DDD;">
+          "Olá, &#123;&#123;1&#125;&#125;! Estamos ao vivo agora no canal do Ministério Luz da Palavra. Assista: &#123;&#123;2&#125;&#125;"
+        </p>
+      </div>
+
+      <div style="background: var(--color-ivory-warm); border: 1px solid var(--color-ivory-border); border-radius: 6px; padding: 1rem;">
+        <span class="badge-editorial" style="font-size: 0.72rem; margin-bottom: 0.5rem;">Modelo 2: Comunicado Geral</span>
+        <strong style="display: block; font-size: 0.9rem; margin-bottom: 0.5rem;">novo_aviso</strong>
+        <p style="font-size: 0.84rem; color: #444; font-style: italic; background: #FFF; padding: 0.75rem; border-radius: 4px; border: 1px dashed #DDD;">
+          "Olá, &#123;&#123;1&#125;&#125;! Novo aviso do Ministério Luz da Palavra: &#123;&#123;2&#125;&#125;. Veja mais: &#123;&#123;3&#125;&#125;"
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Registro de Envios (Logs) -->
+<div class="dash-card">
+  <div class="dash-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <span class="dash-card-title">Histórico de Disparos (Coleção envios)</span>
+  </div>
+  <div style="padding: 0; overflow-x: auto;">
+    <table class="dash-table" style="width: 100%; min-width: 650px;">
+      <thead>
+        <tr>
+          <th>Destinatário</th>
+          <th>Telefone</th>
+          <th>Modelo</th>
+          <th>Status</th>
+          <th>Data / Hora</th>
+          <th>Detalhe</th>
+        </tr>
+      </thead>
+      <tbody id="whatsapp-logs-body">
+        <tr>
+          <td colspan="6" style="text-align: center; padding: 2rem; color: var(--color-gray-doc);">
+            Carregando registros de envio...
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script type="module">
+  import { db, isConfigured } from "{% static 'js/firebase/config.js' %}";
+  import { collection, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const logsBody = document.getElementById("whatsapp-logs-body");
+
+  if (isConfigured) {
+    const q = query(collection(db, "envios"), orderBy("criadoEm", "desc"), limit(50));
+    onSnapshot(q, (snap) => {
+      if (snap.empty) {
+        logsBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:2rem; color:#888;">Nenhum envio registrado ainda. Os disparos ocorrem automaticamente ao iniciar transmissões ao vivo ou publicar avisos.</td></tr>`;
+        return;
+      }
+
+      logsBody.innerHTML = snap.docs.map(docSnap => {
+        const e = docSnap.data();
+        const dateStr = e.criadoEm?.toDate ? e.criadoEm.toDate().toLocaleString("pt-BR") : "—";
+        const isSuccess = e.status === "sucesso" || e.status === "simulado_sucesso";
+
+        return `
+          <tr>
+            <td><strong>${e.nome || "Membro"}</strong></td>
+            <td style="font-size:0.85rem; color:#555;">${e.telefone || "—"}</td>
+            <td><code>${e.template || "—"}</code></td>
+            <td>
+              <span class="badge-editorial" style="font-size:0.72rem; ${isSuccess ? 'background:#E8F5E9; color:#2E7D32; border-color:#A5D6A7;' : 'background:#FFEBEE; color:#C62828; border-color:#FFCDD2;'}">
+                ${e.status}
+              </span>
+            </td>
+            <td style="font-size:0.8rem; color:#666;">${dateStr}</td>
+            <td style="font-size:0.78rem; color:#777; max-width:240px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+              ${e.mensagem || e.erroDetalhe || e.metaMessageId || "OK"}
+            </td>
+          </tr>
+        `;
+      }).join("");
+    });
+  } else {
+    logsBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:2rem; color:#888;">Modo demonstrativo local. Os registros serão sincronizados após a configuração do Firebase.</td></tr>`;
+  }
+</script>
+{% endblock %}

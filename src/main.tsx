@@ -24,6 +24,19 @@ function mountHero() {
     { label: "Contato", href: contactUrl || "/contato-e-horarios/" },
   ];
 
+  let orbitImages: { src: string; alt?: string }[] | undefined = undefined;
+  const rawImages = rootEl.getAttribute("data-orbit-images");
+  if (rawImages) {
+    try {
+      const parsed = JSON.parse(rawImages);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        orbitImages = parsed;
+      }
+    } catch (e) {
+      console.warn("Nao foi possivel carregar data-orbit-images", e);
+    }
+  }
+
   ReactDOM.createRoot(rootEl).render(
     <React.StrictMode>
       <HeroMinisterio
@@ -31,6 +44,7 @@ function mountHero() {
         navItems={navItems}
         activeHref={homeUrl || window.location.pathname}
         nextSectionId="next-section"
+        images={orbitImages}
       />
     </React.StrictMode>
   );

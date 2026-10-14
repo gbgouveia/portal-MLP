@@ -36,6 +36,9 @@
         <a href="{% url 'dashboard:albums_list' %}" class="dash-nav-link {% if 'album' in request.resolver_match.url_name %}active{% endif %}">
           Acervo Fotográfico
         </a>
+        <a href="{% url 'dashboard:hero_photos_list' %}" class="dash-nav-link {% if 'hero_photo' in request.resolver_match.url_name %}active{% endif %}">
+          Fotos da Galeria 3D (Órbita)
+        </a>
 
         <span class="dash-nav-section-title">Vida da Igreja</span>
         <a href="{% url 'dashboard:events_list' %}" class="dash-nav-link {% if 'event' in request.resolver_match.url_name %}active{% endif %}">
@@ -45,13 +48,21 @@
           Vídeos & Ao Vivo
         </a>
 
+        <span class="dash-nav-section-title">Comunicação & Membros</span>
+        <a href="{% url 'dashboard:avisos_list' %}" class="dash-nav-link {% if request.resolver_match.url_name == 'avisos_list' %}active{% endif %}">
+          Quadro de Avisos
+        </a>
+        <a href="{% url 'dashboard:whatsapp_logs' %}" class="dash-nav-link {% if request.resolver_match.url_name == 'whatsapp_logs' %}active{% endif %}">
+          Disparos WhatsApp
+        </a>
+
         <span class="dash-nav-section-title">Governança</span>
         <a href="{% url 'dashboard:audit_list' %}" class="dash-nav-link {% if request.resolver_match.url_name == 'audit_list' %}active{% endif %}">
           Trilha de Auditoria
         </a>
         {% if user.is_mlp_admin %}
           <a href="{% url 'dashboard:users_list' %}" class="dash-nav-link {% if request.resolver_match.url_name == 'users_list' %}active{% endif %}">
-            Usuários & Papéis
+            Irmãos & Usuários
           </a>
         {% endif %}
       </nav>

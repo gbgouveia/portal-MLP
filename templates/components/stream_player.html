@@ -1,0 +1,43 @@
+{% comment %}
+Componente / Partial Reutilizável de Player de Transmissão YouTube
+Parâmetros aceitos via context ou with:
+- video_id: ID do vídeo do YouTube (ex: 'f6ArFvSPlkw')
+- embed_url: URL completa de embed (opcional, calculada a partir de video_id se omitida)
+- title: Título descritivo acessível do vídeo
+- is_live: booleano indicando se é transmissão ao vivo
+- channel_id: ID do canal do YouTube para fallback (default: 'UCkvN5Uqsjhj6lSpIX5JhBpA')
+{% endcomment %}
+<div class="stream-player-container" style="position: relative; width: 100%; aspect-ratio: 16/9; background-color: #0c0806; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.45); border: 1px solid rgba(242, 209, 109, 0.2);">
+  {% if video_id %}
+    <iframe
+      src="https://www.youtube-nocookie.com/embed/{{ video_id }}{% if is_live %}?autoplay=1&mute=0{% endif %}"
+      title="{{ title|default:'Transmissão Oficial — Ministério Luz da Palavra' }}"
+      style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen
+      loading="lazy"
+      referrerpolicy="strict-origin-when-cross-origin">
+    </iframe>
+  {% elif embed_url %}
+    <iframe
+      src="{{ embed_url }}"
+      title="{{ title|default:'Transmissão Oficial — Ministério Luz da Palavra' }}"
+      style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen
+      loading="lazy"
+      referrerpolicy="strict-origin-when-cross-origin">
+    </iframe>
+  {% else %}
+    <!-- Plano B: Fallback de transmissão ao vivo do canal oficial -->
+    <iframe
+      src="https://www.youtube.com/embed/live_stream?channel={{ channel_id|default:'UCkvN5Uqsjhj6lSpIX5JhBpA' }}"
+      title="{{ title|default:'Transmissão ao Vivo — Ministério Luz da Palavra' }}"
+      style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen
+      loading="lazy"
+      referrerpolicy="strict-origin-when-cross-origin">
+    </iframe>
+  {% endif %}
+</div>

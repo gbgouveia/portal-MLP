@@ -1,9 +1,10 @@
+import json
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from apps.institutional.models import InstitutionalSetting, ServiceSchedule, MinistryLeader, MinistryDepartment
 from apps.legacy.models import PastoralProfile, HistoricalMilestone, HistoricalDocument, Testimonial
 from apps.events.models import Event, EventCategory
-from apps.gallery.models import Album, Photo, AlbumCategory
+from apps.gallery.models import Album, Photo, AlbumCategory, HeroOrbitPhoto
 from apps.media_library.models import MediaItem, MediaCategory
 from apps.pages.models import InstitutionalPage
 
@@ -22,12 +23,24 @@ def home_view(request):
     upcoming_events = Event.published.filter(start_datetime__gte=timezone.now()).order_by('start_datetime')[:3]
     recent_photos = Photo.objects.filter(album__status='published').order_by('-id')[:6]
     
-    # Transmissão ao vivo oficial confirmada
+    # Transmissão ao vivo oficial confirmada e última transmissão para fallback
     live_broadcast = MediaItem.published.filter(is_live=True).first()
+    latest_broadcast = MediaItem.published.order_by('-event_date', '-created_at').first()
     recent_messages = MediaItem.published.order_by('-event_date', '-created_at')[:3]
     
     schedules = ServiceSchedule.objects.filter(is_active=True).order_by('weekday', 'time')
     testimonials = Testimonial.published.filter(is_featured=True)[:3]
+
+    # Fotos da galeria 3D em órbita (Hero)
+    orbit_photos = HeroOrbitPhoto.objects.filter(is_active=True).order_by('order', 'id')
+    hero_orbit_photos_list = []
+    for op in orbit_photos:
+        if op.image:
+            hero_orbit_photos_list.append({
+                'src': op.image.url,
+                'alt': op.alt_text or op.title
+            })
+    hero_orbit_photos_json = json.dumps(hero_orbit_photos_list) if hero_orbit_photos_list else ""
 
     context = {
         'pastoral': pastoral,
@@ -35,9 +48,11 @@ def home_view(request):
         'upcoming_events': upcoming_events,
         'recent_photos': recent_photos,
         'live_broadcast': live_broadcast,
+        'latest_broadcast': latest_broadcast,
         'recent_messages': recent_messages,
         'schedules': schedules,
         'testimonials': testimonials,
+        'hero_orbit_photos_json': hero_orbit_photos_json,
     }
     return render(request, 'public/home.html', context)
 
@@ -194,3 +209,33 @@ def contact_view(request):
     """
     schedules = ServiceSchedule.objects.filter(is_active=True).order_by('weekday', 'time')
     return render(request, 'public/contact.html', {'schedules': schedules})
+
+
+def cadastro_view(request):
+    """
+    Página oficial de auto-cadastro de membros com consentimento LGPD.
+    Processamento e persistência efetuados via Firebase Client SDK.
+    """
+    return render(request, 'public/cadastro.html')
+
+
+def entrar_view(request):
+    """
+    Página de login de membros e administradores.
+    """
+    return render(request, 'public/entrar.html')
+
+
+def perfil_view(request):
+    """
+    Página de gerenciamento de perfil do membro (troca de foto, dados e LGPD).
+    """
+    return render(request, 'public/perfil.html')
+
+
+def avisos_view(request):
+    """
+    Quadro geral de avisos oficiais e comunicados do Ministério Luz da Palavra.
+    """
+    return render(request, 'public/avisos.html')
+

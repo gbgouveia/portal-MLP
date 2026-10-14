@@ -105,3 +105,38 @@ class Photo(models.Model):
 
     def __str__(self):
         return self.title or f"Foto #{self.id} — {self.album.title}"
+
+
+class HeroOrbitPhoto(models.Model):
+    """
+    Fotografias exibidas na galeria tridimensional orbital (Hero 3D) na página inicial.
+    Gerenciáveis diretamente pelo painel administrativo (área restrita).
+    """
+    title = models.CharField(_('Título / Identificação'), max_length=150)
+    image = models.ImageField(_('Arquivo de Imagem'), upload_to='gallery/hero_orbit/')
+    alt_text = models.CharField(
+        _('Texto Alternativo (Acessibilidade)'),
+        max_length=255,
+        blank=True,
+        help_text=_('Descrição acessível para leitores de tela.')
+    )
+    order = models.PositiveIntegerField(
+        _('Ordem na Órbita'),
+        default=0,
+        help_text=_('Menor número aparece primeiro no carrossel 3D.')
+    )
+    is_active = models.BooleanField(
+        _('Ativo na Órbita'),
+        default=True,
+        help_text=_('Marque para exibir esta foto na galeria orbital 3D.')
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = _('Foto em Órbita da Hero')
+        verbose_name_plural = _('Fotos em Órbita da Hero')
+        ordering = ['order', 'id']
+
+    def __str__(self):
+        return f"{self.order}. {self.title}"

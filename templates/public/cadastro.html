@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Cadastro de Membros — Ministério Luz da Palavra{% endblock %}
+
+{% block content %}
+<section class="section-editorial" style="min-height: 85vh; display: flex; align-items: center; justify-content: center; padding: clamp(4rem, 6vw, 6rem) 1rem;">
+  <div class="container container-narrow" style="max-width: 540px; margin: 0 auto; width: 100%;">
+    
+    <div style="background: var(--color-white); border: 1px solid var(--color-ivory-border); border-top: 4px solid var(--color-gold); border-radius: 8px; padding: clamp(1.5rem, 4vw, 2.5rem); box-shadow: var(--shadow-card);">
+      
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <span class="badge-editorial" style="margin-bottom: 0.75rem;">Comunidade MLP</span>
+        <h1 class="font-display" style="font-size: 1.85rem; color: var(--color-wine); margin-bottom: 0.5rem;">Cadastro de Membro</h1>
+        <p style="font-size: 0.92rem; color: var(--color-gray-doc); line-height: 1.5;">
+          Faça parte da nossa comunidade, acompanhe os cultos, acesse o acervo histórico e receba avisos oficiais.
+        </p>
+      </div>
+
+      <!-- Alertas de Sucesso / Erro -->
+      <div id="cadastro-alert-box" style="display: none; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem; font-size: 0.9rem; line-height: 1.5;"></div>
+
+      <form id="form-cadastro" novalidate>
+        <!-- Nome Completo -->
+        <div style="margin-bottom: 1.25rem;">
+          <label for="cad-nome" style="display: block; font-size: 0.88rem; font-weight: 600; color: var(--color-wine); margin-bottom: 0.4rem;">
+            Nome Completo *
+          </label>
+          <input type="text" 
+                 id="cad-nome" 
+                 name="nome" 
+                 class="form-control" 
+                 required 
+                 autocomplete="name"
+                 placeholder="Ex: João da Silva"
+                 style="width: 100%; min-height: 44px; padding: 0.65rem 1rem; font-size: 16px; border: 1px solid var(--color-ivory-border); border-radius: 6px; background: var(--color-ivory-warm); color: var(--color-mlp-text);">
+        </div>
+
+        <!-- E-mail -->
+        <div style="margin-bottom: 1.25rem;">
+          <label for="cad-email" style="display: block; font-size: 0.88rem; font-weight: 600; color: var(--color-wine); margin-bottom: 0.4rem;">
+            E-mail *
+          </label>
+          <input type="email" 
+                 id="cad-email" 
+                 name="email" 
+                 class="form-control" 
+                 required 
+                 autocomplete="email"
+                 placeholder="seuemail@exemplo.com"
+                 style="width: 100%; min-height: 44px; padding: 0.65rem 1rem; font-size: 16px; border: 1px solid var(--color-ivory-border); border-radius: 6px; background: var(--color-ivory-warm); color: var(--color-mlp-text);">
+        </div>
+
+        <!-- Telefone WhatsApp com DDD e Máscara -->
+        <div style="margin-bottom: 1.25rem;">
+          <label for="cad-telefone" style="display: block; font-size: 0.88rem; font-weight: 600; color: var(--color-wine); margin-bottom: 0.4rem;">
+            Telefone / WhatsApp com DDD *
+          </label>
+          <input type="tel" 
+                 id="cad-telefone" 
+                 name="telefone" 
+                 class="form-control" 
+                 required 
+                 autocomplete="tel"
+                 placeholder="(61) 98765-4321"
+                 maxlength="15"
+                 style="width: 100%; min-height: 44px; padding: 0.65rem 1rem; font-size: 16px; border: 1px solid var(--color-ivory-border); border-radius: 6px; background: var(--color-ivory-warm); color: var(--color-mlp-text);">
+        </div>
+
+        <!-- Senha -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+          <div>
+            <label for="cad-senha" style="display: block; font-size: 0.88rem; font-weight: 600; color: var(--color-wine); margin-bottom: 0.4rem;">
+              Senha *
+            </label>
+            <input type="password" 
+                   id="cad-senha" 
+                   name="senha" 
+                   class="form-control" 
+                   required 
+                   autocomplete="new-password"
+                   placeholder="Mínimo 8 dígitos"
+                   minlength="8"
+                   style="width: 100%; min-height: 44px; padding: 0.65rem 1rem; font-size: 16px; border: 1px solid var(--color-ivory-border); border-radius: 6px; background: var(--color-ivory-warm); color: var(--color-mlp-text);">
+          </div>
+          <div>
+            <label for="cad-senha-conf" style="display: block; font-size: 0.88rem; font-weight: 600; color: var(--color-wine); margin-bottom: 0.4rem;">
+              Confirmar Senha *
+            </label>
+            <input type="password" 
+                   id="cad-senha-conf" 
+                   name="senha_conf" 
+                   class="form-control" 
+                   required 
+                   autocomplete="new-password"
+                   placeholder="Repita a senha"
+                   minlength="8"
+                   style="width: 100%; min-height: 44px; padding: 0.65rem 1rem; font-size: 16px; border: 1px solid var(--color-ivory-border); border-radius: 6px; background: var(--color-ivory-warm); color: var(--color-mlp-text);">
+          </div>
+        </div>
+
+        <!-- Termo de Consentimento LGPD Obrigatório e Não Pré-Marcado -->
+        <div style="background: rgba(191, 135, 31, 0.08); border: 1px solid rgba(191, 135, 31, 0.25); border-radius: 6px; padding: 1rem; margin-bottom: 1.75rem;">
+          <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+            <input type="checkbox" 
+                   id="cad-lgpd" 
+                   name="consentimento_lgpd" 
+                   required 
+                   style="width: 20px; height: 20px; margin-top: 2px; accent-color: var(--color-gold); cursor: pointer; flex-shrink: 0;">
+            <label for="cad-lgpd" style="font-size: 0.84rem; color: var(--color-mlp-text); line-height: 1.5; cursor: pointer;">
+              <strong>Termo de Consentimento LGPD (Obrigatório):</strong> Concordo em receber avisos de cultos, transmissões ao vivo e comunicados do Ministério Luz da Palavra via WhatsApp e e-mail. Estou ciente de que meus dados são tratados com sigilo exclusivo e que posso revogar este consentimento a qualquer momento pelo meu perfil ou respondendo "SAIR".
+            </label>
+          </div>
+        </div>
+
+        <!-- Botão de Cadastro -->
+        <button type="submit" 
+                id="btn-sub-cadastro" 
+                class="btn btn-gold" 
+                style="width: 100%; min-height: 48px; font-size: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; justify-content: center;">
+          <span id="btn-cad-text">Concluir Cadastro</span>
+          <span id="btn-cad-spinner" style="display: none;">Processando...</span>
+        </button>
+      </form>
+
+      <div style="margin-top: 1.5rem; text-align: center; font-size: 0.88rem; color: var(--color-gray-doc); border-top: 1px solid var(--color-ivory-border); padding-top: 1.25rem;">
+        Já possui conta de membro? 
+        <a href="{% url 'public:entrar' %}" style="color: var(--color-gold); font-weight: 600; text-decoration: none;">Acesse aqui &rarr;</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script type="module">
+  import { cadastrarMembro, maskPhoneInput, getFriendlyErrorMessage } from "{% static 'js/firebase/auth-service.js' %}";
+
+  const form = document.getElementById("form-cadastro");
+  const phoneInput = document.getElementById("cad-telefone");
+  const alertBox = document.getElementById("cadastro-alert-box");
+  const btnSub = document.getElementById("btn-sub-cadastro");
+  const btnText = document.getElementById("btn-cad-text");
+  const btnSpinner = document.getElementById("btn-cad-spinner");
+
+  maskPhoneInput(phoneInput);
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    alertBox.style.display = "none";
+
+    const nome = document.getElementById("cad-nome").value.trim();
+    const email = document.getElementById("cad-email").value.trim();
+    const telefone = document.getElementById("cad-telefone").value.trim();
+    const senha = document.getElementById("cad-senha").value;
+    const senhaConf = document.getElementById("cad-senha-conf").value;
+    const lgpd = document.getElementById("cad-lgpd").checked;
+
+    if (!nome || !email || !telefone || !senha) {
+      showAlert("Por favor, preencha todos os campos obrigatórios.", "error");
+      return;
+    }
+
+    if (senha.length < 8) {
+      showAlert("A senha deve ter pelo menos 8 caracteres.", "error");
+      return;
+    }
+
+    if (senha !== senhaConf) {
+      showAlert("As senhas digitadas não coincidem.", "error");
+      return;
+    }
+
+    if (!lgpd) {
+      showAlert("O consentimento para recebimento de comunicações é obrigatório nos termos da LGPD.", "error");
+      return;
+    }
+
+    // Estado de carregamento
+    btnSub.disabled = true;
+    btnText.style.display = "none";
+    btnSpinner.style.display = "inline";
+
+    try {
+      await cadastrarMembro({
+        nome,
+        email,
+        telefone,
+        senha,
+        consentimentoWhatsapp: true,
+        consentimentoEmail: true
+      });
+
+      showAlert("Cadastro realizado com sucesso! Enviamos um link de confirmação para seu e-mail.", "success");
+      setTimeout(() => {
+        window.location.href = "/perfil/";
+      }, 1500);
+    } catch (err) {
+      console.error(err);
+      showAlert(getFriendlyErrorMessage(err), "error");
+      btnSub.disabled = false;
+      btnText.style.display = "inline";
+      btnSpinner.style.display = "none";
+    }
+  });
+
+  function showAlert(msg, type) {
+    alertBox.textContent = msg;
+    alertBox.style.display = "block";
+    if (type === "success") {
+      alertBox.style.background = "#E8F5E9";
+      alertBox.style.color = "#2E7D32";
+      alertBox.style.border = "1px solid #A5D6A7";
+    } else {
+      alertBox.style.background = "#FFEBEE";
+      alertBox.style.color = "#C62828";
+      alertBox.style.border = "1px solid #FFCDD2";
+    }
+  }
+</script>
+{% endblock %}

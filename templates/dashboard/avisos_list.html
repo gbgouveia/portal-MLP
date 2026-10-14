@@ -1,0 +1,221 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block page_title %}Gestão do Quadro de Avisos — Painel MLP{% endblock %}
+
+{% block content %}
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+  <div>
+    <h1 class="font-display" style="font-size: 1.6rem; color: var(--color-wine); margin-bottom: 0.35rem;">
+      Quadro de Avisos & Notificações
+    </h1>
+    <p style="color: var(--color-gray-doc); font-size: 0.9rem; margin: 0;">
+      Publique comunicados oficiais, fixe informes urgentes e sincronize alertas em tempo real para o sininho.
+    </p>
+  </div>
+  
+  <button type="button" id="btn-toggle-novo-aviso" class="btn btn-sm btn-gold">
+    + Novo Aviso
+  </button>
+</div>
+
+<!-- Modal / Formulário de Novo Aviso -->
+<div id="box-novo-aviso" class="dash-card" style="display: none; margin-bottom: 2rem; border-top: 3px solid var(--color-gold);">
+  <div class="dash-card-header">
+    <span class="dash-card-title">Criar Novo Comunicado Oficial</span>
+  </div>
+  <div style="padding: 1.5rem;">
+    <form id="form-criar-aviso">
+      <div style="margin-bottom: 1.25rem;">
+        <label for="aviso-titulo" class="form-label" style="display:block; font-weight:600; margin-bottom:0.35rem;">Título do Aviso *</label>
+        <input type="text" id="aviso-titulo" class="form-control" required placeholder="Ex: Vigília de Oração e Louvor" style="width:100%; min-height:40px; padding:0.5rem 0.85rem; border:1px solid var(--color-ivory-border); border-radius:6px;">
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+        <div>
+          <label for="aviso-tipo" class="form-label" style="display:block; font-weight:600; margin-bottom:0.35rem;">Tipo / Categoria</label>
+          <select id="aviso-tipo" class="form-control" style="width:100%; min-height:40px; padding:0.5rem 0.85rem; border:1px solid var(--color-ivory-border); border-radius:6px;">
+            <option value="geral">Geral (Informativo)</option>
+            <option value="evento">Evento Especial</option>
+            <option value="live">Transmissão ao Vivo</option>
+            <option value="urgente">Urgente</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="aviso-expira" class="form-label" style="display:block; font-weight:600; margin-bottom:0.35rem;">Data de Expiração (Opcional)</label>
+          <input type="datetime-local" id="aviso-expira" class="form-control" style="width:100%; min-height:40px; padding:0.5rem 0.85rem; border:1px solid var(--color-ivory-border); border-radius:6px;">
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label for="aviso-texto" class="form-label" style="display:block; font-weight:600; margin-bottom:0.35rem;">Conteúdo do Aviso *</label>
+        <textarea id="aviso-texto" class="form-control" rows="4" required placeholder="Digite a mensagem completa do comunicado..." style="width:100%; padding:0.65rem 0.85rem; border:1px solid var(--color-ivory-border); border-radius:6px; font-family:inherit;"></textarea>
+      </div>
+
+      <div style="display: flex; gap: 2rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+        <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; cursor: pointer;">
+          <input type="checkbox" id="aviso-fixado" style="width: 18px; height: 18px; accent-color: var(--color-gold);">
+          <span>Fixar no topo do quadro</span>
+        </label>
+        <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; cursor: pointer;">
+          <input type="checkbox" id="aviso-publicado" checked style="width: 18px; height: 18px; accent-color: var(--color-gold);">
+          <span>Publicar imediatamente no site público</span>
+        </label>
+        <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; cursor: pointer;">
+          <input type="checkbox" id="aviso-notificar" checked style="width: 18px; height: 18px; accent-color: var(--color-gold);">
+          <span>Enviar para o Sininho de Notificações</span>
+        </label>
+      </div>
+
+      <div style="display: flex; gap: 0.75rem;">
+        <button type="submit" id="btn-salvar-aviso" class="btn btn-sm btn-gold">Publicar Aviso</button>
+        <button type="button" id="btn-cancelar-aviso" class="btn btn-sm btn-outline">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Tabela de Avisos Cadastrados em Tempo Real -->
+<div class="dash-card">
+  <div class="dash-card-header">
+    <span class="dash-card-title">Avisos Registrados</span>
+  </div>
+  <div style="padding: 0; overflow-x: auto;">
+    <table class="dash-table" style="width: 100%; min-width: 650px;">
+      <thead>
+        <tr>
+          <th>Título</th>
+          <th>Tipo</th>
+          <th>Fixado</th>
+          <th>Status</th>
+          <th>Data de Criação</th>
+          <th style="text-align: right;">Ações</th>
+        </tr>
+      </thead>
+      <tbody id="avisos-table-body">
+        <tr>
+          <td colspan="6" style="text-align: center; padding: 2rem; color: var(--color-gray-doc);">
+            Carregando avisos do Firestore...
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script type="module">
+  import { db, isConfigured } from "{% static 'js/firebase/config.js' %}";
+  import {
+    collection,
+    query,
+    orderBy,
+    onSnapshot,
+    addDoc,
+    deleteDoc,
+    doc,
+    updateDoc,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const btnToggle = document.getElementById("btn-toggle-novo-aviso");
+  const boxNovoAviso = document.getElementById("box-novo-aviso");
+  const btnCancelar = document.getElementById("btn-cancelar-aviso");
+  const formAviso = document.getElementById("form-criar-aviso");
+  const tableBody = document.getElementById("avisos-table-body");
+
+  btnToggle.addEventListener("click", () => {
+    boxNovoAviso.style.display = boxNovoAviso.style.display === "none" ? "block" : "none";
+  });
+
+  btnCancelar.addEventListener("click", () => {
+    boxNovoAviso.style.display = "none";
+  });
+
+  if (isConfigured) {
+    const q = query(collection(db, "avisos"), orderBy("criadoEm", "desc"));
+    onSnapshot(q, (snap) => {
+      if (snap.empty) {
+        tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:2rem; color:#888;">Nenhum aviso cadastrado ainda.</td></tr>`;
+        return;
+      }
+
+      tableBody.innerHTML = snap.docs.map(docSnap => {
+        const a = docSnap.data();
+        const id = docSnap.id;
+        const dateStr = a.criadoEm?.toDate ? a.criadoEm.toDate().toLocaleDateString("pt-BR") : "—";
+
+        return `
+          <tr>
+            <td><strong>${a.titulo}</strong></td>
+            <td><span class="badge-editorial">${(a.tipo || "geral").toUpperCase()}</span></td>
+            <td>${a.fixado ? '<span style="color:#BF871F; font-weight:700;">Sim</span>' : '<span style="color:#999;">Não</span>'}</td>
+            <td>${a.publicado ? '<span style="color:#2E7D32; font-weight:600;">Publicado</span>' : '<span style="color:#C62828;">Rascunho</span>'}</td>
+            <td>${dateStr}</td>
+            <td style="text-align:right;">
+              <button type="button" class="btn btn-sm btn-outline btn-del-aviso" data-id="${id}" style="color:#E53935; border-color:#FFCDD2; padding:0.25rem 0.5rem; font-size:0.75rem;">
+                Excluir
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+
+      document.querySelectorAll(".btn-del-aviso").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const id = btn.getAttribute("data-id");
+          if (confirm("Confirma a exclusão deste aviso?")) {
+            await deleteDoc(doc(db, "avisos", id));
+          }
+        });
+      });
+    });
+
+    formAviso.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const titulo = document.getElementById("aviso-titulo").value.trim();
+      const tipo = document.getElementById("aviso-tipo").value;
+      const texto = document.getElementById("aviso-texto").value.trim();
+      const fixado = document.getElementById("aviso-fixado").checked;
+      const publicado = document.getElementById("aviso-publicado").checked;
+      const notificar = document.getElementById("aviso-notificar").checked;
+      const expiraVal = document.getElementById("aviso-expira").value;
+
+      const expiraEm = expiraVal ? new Date(expiraVal) : null;
+
+      try {
+        const docRef = await addDoc(collection(db, "avisos"), {
+          titulo,
+          tipo,
+          texto,
+          fixado,
+          publicado,
+          expiraEm,
+          criadoPor: "{{ request.user.username }}",
+          criadoEm: serverTimestamp()
+        });
+
+        if (notificar && publicado) {
+          await addDoc(collection(db, "notificacoes"), {
+            titulo: `Aviso: ${titulo}`,
+            texto: texto.substring(0, 100) + (texto.length > 100 ? "..." : ""),
+            link: "/#avisos",
+            tipo: tipo,
+            criadoEm: serverTimestamp()
+          });
+        }
+
+        formAviso.reset();
+        boxNovoAviso.style.display = "none";
+        alert("Aviso publicado com sucesso!");
+      } catch (err) {
+        alert("Erro ao salvar aviso: " + err.message);
+      }
+    });
+  } else {
+    tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:2rem; color:#888;">Configure as chaves do Firebase no arquivo .env para gerenciar avisos em nuvem.</td></tr>`;
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,120 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block page_title %}Fotos da Órbita 3D (Hero){% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+  <div>
+    <h1 class="font-display" style="font-size: 1.6rem; color: var(--color-wine); margin-bottom: 0.35rem;">
+      Fotos da Galeria 3D em Órbita (Hero)
+    </h1>
+    <p style="color: var(--color-gray-doc); font-size: 0.9rem; max-width: 680px;">
+      Gerencie as imagens que circulam dinamicamente na galeria tridimensional orbital atrás do Pastor Leonel na página de abertura. Você pode adicionar novas fotos, alterar a ordem, substituir arquivos ou ativar/desativar exibições.
+    </p>
+  </div>
+  <div style="display: flex; gap: 0.75rem;">
+    <a href="{% url 'public:home' %}" target="_blank" class="btn btn-sm btn-outline">
+      &nearr; Ver Hero no Portal
+    </a>
+    <a href="{% url 'dashboard:hero_photo_create' %}" class="btn btn-gold">
+      + Adicionar Foto na Órbita
+    </a>
+  </div>
+</div>
+
+<!-- Barra de Resumo das Fotos em Órbita -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+  <div class="dash-metric-card" style="padding: 1.25rem;">
+    <span class="dash-metric-title">Total de Fotos Cadastradas</span>
+    <span class="dash-metric-value">{{ total_count }}</span>
+    <span class="dash-metric-desc">Acervo da galeria orbital</span>
+  </div>
+  <div class="dash-metric-card" style="padding: 1.25rem;">
+    <span class="dash-metric-title">Fotos Ativas em Órbita</span>
+    <span class="dash-metric-value" style="color: #0E9F6E;">{{ active_count }}</span>
+    <span class="dash-metric-desc">Circulando no carrossel 3D</span>
+  </div>
+</div>
+
+<div class="dash-card">
+  <div class="dash-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <span class="dash-card-title">Sequência de Imagens na Órbita 3D</span>
+    <span style="font-size: 0.8rem; color: var(--color-gray-doc);">Ordenadas por posição</span>
+  </div>
+
+  <div style="padding: 0; overflow-x: auto;">
+    <table class="dash-table">
+      <thead>
+        <tr>
+          <th style="width: 70px; text-align: center;">Ordem</th>
+          <th style="width: 110px;">Prévia</th>
+          <th>Título / Identificação</th>
+          <th>Texto Acessível (Alt)</th>
+          <th style="width: 130px; text-align: center;">Status na Órbita</th>
+          <th style="text-align: right; width: 220px;">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for photo in photos %}
+          <tr>
+            <td style="text-align: center;">
+              <span style="display: inline-block; width: 28px; height: 28px; line-height: 28px; border-radius: 50%; background: var(--color-ivory-border); color: var(--color-wine); font-weight: 600; font-size: 0.85rem;">
+                {{ photo.order }}
+              </span>
+            </td>
+            <td>
+              <div style="width: 90px; height: 56px; border-radius: 4px; overflow: hidden; background: #080605; border: 1px solid rgba(191,135,31,0.3); display: flex; align-items: center; justify-content: center;">
+                {% if photo.image %}
+                  <img src="{{ photo.image.url }}" alt="{{ photo.alt_text|default:photo.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                  <span style="font-size: 0.7rem; color: #888;">Sem imagem</span>
+                {% endif %}
+              </div>
+            </td>
+            <td>
+              <strong style="color: var(--color-wine); font-size: 0.95rem; display: block;">{{ photo.title }}</strong>
+              <span style="font-size: 0.78rem; color: var(--color-gray-doc);">Adicionada em {{ photo.created_at|date:"d/m/Y H:i" }}</span>
+            </td>
+            <td>
+              <span style="font-size: 0.82rem; color: var(--color-gray-doc);">{{ photo.alt_text|default:"—" }}</span>
+            </td>
+            <td style="text-align: center;">
+              {% if photo.is_active %}
+                <span class="badge-status" style="background: #DEF7EC; color: #03543F; border: 1px solid #31C48D;">
+                  &bull; Ativa na Órbita
+                </span>
+              {% else %}
+                <span class="badge-status" style="background: #F3F4F6; color: #6B7280; border: 1px solid #D1D5DB;">
+                  Pausada
+                </span>
+              {% endif %}
+            </td>
+            <td style="text-align: right; white-space: nowrap;">
+              <form action="{% url 'dashboard:hero_photo_toggle_active' photo.pk %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline" style="padding: 0.35rem 0.65rem; font-size: 0.78rem;" title="{% if photo.is_active %}Desativar foto da órbita{% else %}Ativar foto na órbita{% endif %}">
+                  {% if photo.is_active %}Pausar{% else %}Ativar{% endif %}
+                </button>
+              </form>
+              <a href="{% url 'dashboard:hero_photo_edit' photo.pk %}" class="btn btn-sm btn-gold" style="padding: 0.35rem 0.65rem; font-size: 0.78rem;">
+                Editar
+              </a>
+              <a href="{% url 'dashboard:hero_photo_delete' photo.pk %}" class="btn btn-sm btn-outline" style="padding: 0.35rem 0.65rem; font-size: 0.78rem; color: #E02424; border-color: #F8B4B4;" title="Excluir">
+                &times;
+              </a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 3rem 1rem; color: var(--color-gray-doc);">
+              <p style="margin-bottom: 1rem; font-size: 0.95rem;">Nenhuma foto cadastrada na órbita da Hero.</p>
+              <a href="{% url 'dashboard:hero_photo_create' %}" class="btn btn-gold">+ Cadastrar Primeira Foto</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

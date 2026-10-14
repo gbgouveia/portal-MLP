@@ -15,4 +15,8 @@ urlpatterns = [
     path('mensagens-e-ao-vivo/<slug:slug>/', views.media_detail_view, name='media_detail'),
     path('pagina/<slug:slug>/', views.institutional_page_view, name='page_detail'),
     path('contato-e-horarios/', views.contact_view, name='contact'),
+    path('cadastro/', views.cadastro_view, name='cadastro'),
+    path('entrar/', views.entrar_view, name='entrar'),
+    path('perfil/', views.perfil_view, name='perfil'),
+    path('avisos/', views.avisos_view, name='avisos'),
 ]

@@ -1,0 +1,45 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.admin == true ||
+        request.auth.token.role == 'admin'
+      );
+    }
+    
+    // Foto de perfil do membro: perfis/{uid}/avatar.*
+    // Máx. 2 MB (2 * 1024 * 1024 bytes), formato image/jpeg|png|webp
+    match /perfis/{uid}/{fileName} {
+      allow read: if true;
+      allow write: if isOwner(uid)
+        && request.resource.size <= 2 * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|png|webp)');
+      allow delete: if isOwner(uid) || isAdmin();
+    }
+    
+    // Galeria institucional no Storage:
+    // Leitura pública, escrita só admin
+    match /galeria/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin()
+        && request.resource.size <= 10 * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|png|webp)');
+      allow delete: if isAdmin();
+    }
+    
+    // Nega tudo o mais por padrão
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

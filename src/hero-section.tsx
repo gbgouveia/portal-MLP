@@ -47,50 +47,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       aria-label="Abertura Cinematográfica do Ministério Luz da Palavra"
     >
       {/* 1. Navegação Superior Integrada Fiel à Referência Visual */}
+      {/* 1. Navegação Superior mantida oculta para dar lugar ao Cabeçalho Oficial Fixo */}
       <nav
-        className="relative z-30 w-full pt-6 pb-2 px-6 flex justify-center items-center pointer-events-auto"
-        aria-label="Navegação Principal da Hero"
+        className="hidden pointer-events-none"
+        aria-label="Navegação da Hero"
       >
-        <div className="flex items-center gap-6 sm:gap-10 md:gap-12 text-xs sm:text-sm font-sans tracking-widest text-[#F2F1F0]/75">
-          <a
-            href={homeUrl}
-            className="relative text-[#F2D16D] font-medium transition-colors hover:text-[#F2D16D] pb-1"
-          >
-            Início
-            <span
-              className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#F2D16D] rounded-full shadow-[0_0_8px_#F2D16D]"
-              aria-hidden="true"
-            />
-          </a>
-
-          <a
-            href={ministryUrl}
-            className="transition-colors hover:text-[#F2D16D]"
-          >
-            Ministério
-          </a>
-
-          <a
-            href={wordUrl}
-            className="transition-colors hover:text-[#F2D16D]"
-          >
-            Palavra
-          </a>
-
-          <a
-            href={galleryUrl}
-            className="transition-colors hover:text-[#F2D16D]"
-          >
-            Galeria
-          </a>
-
-          <a
-            href={contactUrl}
-            className="transition-colors hover:text-[#F2D16D]"
-          >
-            Contato
-          </a>
-        </div>
       </nav>
 
       {/* 2. Galeria Orbital 3D Curva com TiltedGridHero */}

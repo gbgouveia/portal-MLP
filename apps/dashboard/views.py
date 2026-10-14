@@ -4,10 +4,14 @@ from django.contrib import messages
 from django.utils import timezone
 from apps.legacy.models import PastoralProfile, HistoricalMilestone, HistoricalDocument, Testimonial
 from apps.events.models import Event, EventCategory
-from apps.gallery.models import Album, Photo, AlbumCategory
+from apps.gallery.models import Album, Photo, AlbumCategory, HeroOrbitPhoto
 from apps.media_library.models import MediaItem, MediaCategory
 from apps.pages.models import InstitutionalPage
 from apps.institutional.models import InstitutionalSetting, ServiceSchedule
+import csv
+from django.http import HttpResponse
+from django.core.paginator import Paginator
+from django.db.models import Q
 from apps.accounts.models import User, UserRole
 from apps.audit.models import AuditLog, AuditAction
 from apps.core.models import PublicationStatus
@@ -23,6 +27,7 @@ def dashboard_index(request):
     album_count = Album.objects.count()
     event_count = Event.objects.count()
     media_count = MediaItem.objects.count()
+    hero_photo_count = HeroOrbitPhoto.objects.filter(is_active=True).count()
     live_stream = MediaItem.objects.filter(is_live=True).first()
     recent_audits = AuditLog.objects.select_related('user').order_by('-created_at')[:8]
     
@@ -36,6 +41,7 @@ def dashboard_index(request):
         'album_count': album_count,
         'event_count': event_count,
         'media_count': media_count,
+        'hero_photo_count': hero_photo_count,
         'live_stream': live_stream,
         'recent_audits': recent_audits,
         'pending_reviews': pending_milestones + pending_events,
@@ -359,3 +365,227 @@ def users_list(request):
 
     users = User.objects.all().order_by('username')
     return render(request, 'dashboard/users_list.html', {'users': users})
+
+
+# ==========================================
+# 7. FOTOS EM ÓRBITA DA HERO 3D (ÁREA RESTRITA)
+# ==========================================
+@login_required
+def hero_photos_list(request):
+    """
+    Lista e gerencia as fotografias que circulam em órbita na galeria 3D da página inicial.
+    """
+    photos = HeroOrbitPhoto.objects.all().order_by('order', 'id')
+    active_count = photos.filter(is_active=True).count()
+    return render(request, 'dashboard/hero_photos_list.html', {
+        'photos': photos,
+        'total_count': photos.count(),
+        'active_count': active_count,
+    })
+
+
+@login_required
+def hero_photo_create(request):
+    """
+    Adiciona uma nova fotografia para a galeria orbital 3D.
+    """
+    if request.method == 'POST':
+        title = request.POST.get('title', '').strip()
+        alt_text = request.POST.get('alt_text', '').strip()
+        order = int(request.POST.get('order') or 0)
+        is_active = request.POST.get('is_active') == 'on'
+
+        if not title:
+            messages.error(request, 'O título da foto é obrigatório.')
+            return render(request, 'dashboard/hero_photo_form.html', {'photo': None})
+
+        if 'image' not in request.FILES:
+            messages.error(request, 'Por favor, selecione um arquivo de imagem.')
+            return render(request, 'dashboard/hero_photo_form.html', {'photo': None})
+
+        photo = HeroOrbitPhoto(
+            title=title,
+            alt_text=alt_text or title,
+            order=order,
+            is_active=is_active,
+            image=request.FILES['image']
+        )
+        photo.save()
+        AuditLog.log(request.user, AuditAction.CREATE, photo, details=f'Foto adicionada à órbita da Hero 3D: {title}')
+        messages.success(request, f'Foto "{title}" adicionada com sucesso à órbita 3D!')
+        return redirect('dashboard:hero_photos_list')
+
+    next_order = (HeroOrbitPhoto.objects.order_by('-order').values_list('order', flat=True).first() or 0) + 1
+    return render(request, 'dashboard/hero_photo_form.html', {'photo': None, 'next_order': next_order})
+
+
+@login_required
+def hero_photo_edit(request, pk):
+    """
+    Edita dados ou substitui a imagem de uma foto em órbita da Hero 3D.
+    """
+    photo = get_object_or_404(HeroOrbitPhoto, pk=pk)
+    if request.method == 'POST':
+        photo.title = request.POST.get('title', photo.title).strip()
+        photo.alt_text = request.POST.get('alt_text', photo.alt_text).strip()
+        photo.order = int(request.POST.get('order') or 0)
+        photo.is_active = request.POST.get('is_active') == 'on'
+
+        if 'image' in request.FILES:
+            photo.image = request.FILES['image']
+
+        photo.save()
+        AuditLog.log(request.user, AuditAction.UPDATE, photo, details=f'Foto da órbita 3D editada: {photo.title}')
+        messages.success(request, f'Foto "{photo.title}" atualizada com sucesso!')
+        return redirect('dashboard:hero_photos_list')
+
+    return render(request, 'dashboard/hero_photo_form.html', {'photo': photo})
+
+
+@login_required
+def hero_photo_toggle_active(request, pk):
+    """
+    Ativa/Desativa exibição de uma fotografia na órbita 3D com um clique.
+    """
+    photo = get_object_or_404(HeroOrbitPhoto, pk=pk)
+    photo.is_active = not photo.is_active
+    photo.save(update_fields=['is_active', 'updated_at'])
+    status_str = "ativada" if photo.is_active else "desativada"
+    AuditLog.log(request.user, AuditAction.UPDATE, photo, details=f'Foto da órbita 3D {status_str}: {photo.title}')
+    messages.info(request, f'Foto "{photo.title}" foi {status_str} na órbita 3D.')
+    return redirect('dashboard:hero_photos_list')
+
+
+@login_required
+def hero_photo_delete(request, pk):
+    """
+    Remove uma fotografia da órbita 3D.
+    """
+    photo = get_object_or_404(HeroOrbitPhoto, pk=pk)
+    if request.method == 'POST':
+        title = photo.title
+        AuditLog.log(request.user, AuditAction.DELETE, photo, details=f'Foto removida da órbita 3D: {title}')
+        photo.delete()
+        messages.success(request, f'Foto "{title}" removida da órbita 3D com sucesso.')
+        return redirect('dashboard:hero_photos_list')
+
+    return render(request, 'dashboard/hero_photo_confirm_delete.html', {'photo': photo})
+
+
+# ==========================================
+# 6. GESTÃO DE MEMBROS E USUÁRIOS (ETAPA 4)
+# ==========================================
+@login_required
+def users_list(request):
+    """
+    Lista de irmãos/usuários com busca, filtros (ativo/inativo), paginação.
+    """
+    if not request.user.is_mlp_admin:
+        messages.error(request, 'Acesso restrito a administradores.')
+        return redirect('dashboard:index')
+
+    search = request.GET.get('q', '').strip()
+    status_filter = request.GET.get('status', '').strip()
+
+    users_qs = User.objects.all().order_by('-date_joined')
+    if search:
+        users_qs = users_qs.filter(
+            Q(username__icontains=search) |
+            Q(first_name__icontains=search) |
+            Q(last_name__icontains=search) |
+            Q(email__icontains=search) |
+            Q(phone__icontains=search)
+        )
+    if status_filter == 'ativo':
+        users_qs = users_qs.filter(is_active=True)
+    elif status_filter == 'inativo':
+        users_qs = users_qs.filter(is_active=False)
+
+    paginator = Paginator(users_qs, 15)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'users': page_obj,
+        'search': search,
+        'status_filter': status_filter,
+        'total_count': users_qs.count(),
+    }
+    return render(request, 'dashboard/users_list.html', context)
+
+
+@login_required
+def users_export_csv(request):
+    """
+    Exportação oficial da lista de membros em CSV com codificação UTF-8 BOM.
+    """
+    if not request.user.is_mlp_admin:
+        messages.error(request, 'Acesso restrito a administradores.')
+        return redirect('dashboard:index')
+
+    response = HttpResponse(content_type='text/csv; charset=utf-8')
+    response['Content-Disposition'] = 'attachment; filename="membros_mlp.csv"'
+    response.write('\ufeff'.encode('utf-8'))
+
+    writer = csv.writer(response)
+    writer.writerow(['ID', 'Nome de Usuário', 'Nome Completo', 'E-mail', 'Telefone', 'Papel', 'Ativo', 'Data de Cadastro'])
+
+    for u in User.objects.all().order_by('first_name', 'username'):
+        writer.writerow([
+            u.id,
+            u.username,
+            u.get_full_name(),
+            u.email,
+            u.phone,
+            u.get_role_display(),
+            'Sim' if u.is_active else 'Não',
+            u.date_joined.strftime('%d/%m/%Y %H:%M') if u.date_joined else ''
+        ])
+    return response
+
+
+@login_required
+def user_toggle_status(request, pk):
+    """
+    Ativa/Desativa o acesso de um irmão na congregação.
+    """
+    if not request.user.is_mlp_admin:
+        messages.error(request, 'Acesso restrito a administradores.')
+        return redirect('dashboard:index')
+
+    u = get_object_or_404(User, pk=pk)
+    if u.id == request.user.id:
+        messages.error(request, 'Você não pode desativar o seu próprio usuário.')
+        return redirect('dashboard:users_list')
+
+    u.is_active = not u.is_active
+    u.save(update_fields=['is_active'])
+    status_str = 'ativado' if u.is_active else 'desativado'
+    AuditLog.log(request.user, AuditAction.UPDATE, u, details=f'Membro {u.username} {status_str}')
+    messages.success(request, f'Membro {u.get_full_name() or u.username} foi {status_str} com sucesso.')
+    return redirect('dashboard:users_list')
+
+
+@login_required
+def dashboard_avisos_list(request):
+    """
+    Painel de gestão de avisos (criar, fixar, expirar e excluir).
+    Integrado com o Firestore em tempo real.
+    """
+    if not request.user.is_mlp_admin:
+        messages.error(request, 'Acesso restrito a administradores.')
+        return redirect('dashboard:index')
+    return render(request, 'dashboard/avisos_list.html')
+
+
+@login_required
+def dashboard_whatsapp_logs(request):
+    """
+    Consulta ao registro de envios do WhatsApp Business (Meta Cloud API).
+    Exibe registros de envios, status de entrega e custos.
+    """
+    if not request.user.is_mlp_admin:
+        messages.error(request, 'Acesso restrito a administradores.')
+        return redirect('dashboard:index')
+    return render(request, 'dashboard/whatsapp_logs.html')
+

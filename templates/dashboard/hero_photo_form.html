@@ -1,0 +1,88 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block page_title %}{% if photo %}Editar Foto da Órbita{% else %}Nova Foto da Órbita 3D{% endif %}{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px;">
+  <div style="margin-bottom: 2rem;">
+    <a href="{% url 'dashboard:hero_photos_list' %}" style="font-size: 0.85rem; color: var(--color-gold); text-decoration: none;">
+      &larr; Voltar para as Fotos da Órbita 3D
+    </a>
+    <h1 class="font-display" style="font-size: 1.6rem; color: var(--color-wine); margin-top: 0.5rem; margin-bottom: 0.35rem;">
+      {% if photo %}Editar Foto da Órbita 3D{% else %}Adicionar Foto na Órbita da Hero 3D{% endif %}
+    </h1>
+    <p style="color: var(--color-gray-doc); font-size: 0.9rem;">
+      Esta imagem circulará no carrossel 3D cilíndrico atrás do Pastor Leonel na página inicial.
+    </p>
+  </div>
+
+  <div class="dash-card">
+    <div class="dash-card-header">
+      <span class="dash-card-title">Dados da Fotografia</span>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" style="padding: 1.75rem;">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label class="form-label">Título / Identificação da Imagem *</label>
+        <input type="text" name="title" class="form-control" value="{{ photo.title|default:'' }}" placeholder="Ex: Pastor Leonel ministrando no culto dominical" required>
+        <span class="form-help">Nome de controle para identificação no painel e na galeria.</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Arquivo de Fotografia {% if not photo %}*{% endif %}</label>
+        <input type="file" name="image" class="form-control" accept="image/*" {% if not photo %}required{% endif %}>
+        <span class="form-help">Formatos recomendados: WebP, PNG ou JPG. Resolução ideal: cerca de 600&times;400px a 1200&times;800px.</span>
+        
+        {% if photo and photo.image %}
+          <div style="margin-top: 1rem; padding: 1rem; background: var(--color-ivory-light); border: 1px solid var(--color-ivory-border); border-radius: 4px; display: flex; align-items: center; gap: 1rem;">
+            <div style="width: 120px; height: 75px; border-radius: 4px; overflow: hidden; background: #080605; border: 1px solid rgba(191,135,31,0.3); flex-shrink: 0;">
+              <img src="{{ photo.image.url }}" alt="{{ photo.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <div>
+              <strong style="font-size: 0.88rem; color: var(--color-wine); display: block;">Imagem Atual Carregada</strong>
+              <a href="{{ photo.image.url }}" target="_blank" style="font-size: 0.82rem; color: var(--color-gold); text-decoration: underline;">
+                Visualizar arquivo em tamanho real
+              </a>
+              <span style="font-size: 0.78rem; color: var(--color-gray-doc); display: block; margin-top: 0.25rem;">
+                Envie um novo arquivo acima somente se desejar substituir esta imagem.
+              </span>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Texto Alternativo Acessível (Alt)</label>
+        <input type="text" name="alt_text" class="form-control" value="{{ photo.alt_text|default:'' }}" placeholder="Ex: Fotografia colorida com a congregação reunida no templo solene">
+        <span class="form-help">Texto descritivo para pessoas com deficiência visual e leitores de tela.</span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 160px 1fr; gap: 1.5rem; align-items: start; border-top: 1px solid var(--color-ivory-border); padding-top: 1.25rem;">
+        <div class="form-group">
+          <label class="form-label">Posição / Ordem</label>
+          <input type="number" name="order" class="form-control" value="{% if photo %}{{ photo.order }}{% else %}{{ next_order|default:1 }}{% endif %}" min="0">
+          <span class="form-help">Menor número entra antes na sequência.</span>
+        </div>
+
+        <div class="form-group" style="padding-top: 1.85rem;">
+          <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer;">
+            <input type="checkbox" name="is_active" {% if not photo or photo.is_active %}checked{% endif %} style="width: 18px; height: 18px; accent-color: var(--color-gold);">
+            <span style="font-size: 0.92rem; font-weight: 500; color: var(--color-wine);">Ativa na Galeria Orbital 3D</span>
+          </label>
+          <span class="form-help" style="margin-left: 28px;">Quando desmarcada, a foto fica guardada no painel sem rodar na hero.</span>
+        </div>
+      </div>
+
+      <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: flex-end; border-top: 1px solid var(--color-ivory-border); padding-top: 1.25rem;">
+        <a href="{% url 'dashboard:hero_photos_list' %}" class="btn btn-outline">Cancelar</a>
+        <button type="submit" class="btn btn-gold">
+          {% if photo %}Salvar Alterações{% else %}Adicionar à Órbita 3D{% endif %}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

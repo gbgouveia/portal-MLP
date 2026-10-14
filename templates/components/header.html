@@ -1,37 +1,170 @@
 {% load static %}
-<header class="site-header" role="banner">
-  <div class="container header-inner">
-    <a href="{% url 'public:home' %}" class="brand-link" aria-label="Ir para a página inicial do Ministério Luz da Palavra">
-      <div class="brand-monogram">MLP</div>
-      <div class="brand-text">
-        <span class="brand-name">{{ institutional.name|default:"Ministério Luz da Palavra" }}</span>
-        <span class="brand-sub">Legado &bull; Fé &bull; Continuidade</span>
-      </div>
+<!-- Cabeçalho Institucional Oficial — Ministério Luz da Palavra -->
+<header class="site-header" id="site-header" data-scrolled="false" role="banner">
+  <div class="site-header__bar">
+    <!-- Logo Institucional -->
+    <a href="{% url 'public:home' %}" class="site-header__logo" aria-label="Ministério Luz da Palavra — Página Inicial">
+      <img src="{% static 'images/logo-mlp.png' %}" 
+           alt="Ministério Luz da Palavra" 
+           width="160" 
+           height="56"
+           class="site-header__logo-img"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
+      <span class="site-header__logo-fallback" style="display: none;">Luz da Palavra</span>
     </a>
 
-    <!-- Botão Hamburger Mobile -->
-    <button class="mobile-toggle" aria-label="Abrir menu de navegação" aria-expanded="false" aria-controls="site-nav-menu">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="3" y1="12" x2="21" y2="12"></line>
-        <line x1="3" y1="6" x2="21" y2="6"></line>
-        <line x1="3" y1="18" x2="21" y2="18"></line>
-      </svg>
-    </button>
-
-    <nav class="site-nav" id="site-nav-menu" role="navigation" aria-label="Navegação institucional">
-      <a href="{% url 'public:home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Início</a>
-      <a href="{% url 'public:legacy' %}" class="nav-link {% if request.resolver_match.url_name == 'legacy' %}active{% endif %}">Legado do Pr. Leonel</a>
-      <a href="{% url 'public:history' %}" class="nav-link {% if request.resolver_match.url_name == 'history' %}active{% endif %}">Nossa História</a>
-      <a href="{% url 'public:events' %}" class="nav-link {% if request.resolver_match.url_name == 'events' %}active{% endif %}">Agenda & Cultos</a>
-      <a href="{% url 'public:gallery' %}" class="nav-link {% if request.resolver_match.url_name == 'gallery' %}active{% endif %}">Acervo Fotográfico</a>
-      <a href="{% url 'public:media' %}" class="nav-link {% if request.resolver_match.url_name == 'media' %}active{% endif %}">Mensagens & Ao Vivo</a>
-      <a href="{% url 'public:contact' %}" class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">Contato</a>
-      
-      {% if user.is_authenticated %}
-        <a href="{% url 'dashboard:index' %}" class="nav-link nav-btn-highlight">Painel MLP</a>
-      {% else %}
-        <a href="{% url 'login' %}" class="nav-link nav-btn-highlight">Área Restrita</a>
-      {% endif %}
+    <!-- Navegação Desktop (≥ 1024px) -->
+    <nav class="site-header__nav" aria-label="Navegação Principal">
+      <ul class="site-header__menu" role="menubar">
+        <li role="none">
+          <a href="{% url 'public:home' %}" class="site-header__link active" data-section="inicio" role="menuitem">Início</a>
+        </li>
+        <li role="none">
+          <a href="{% url 'public:home' %}#ministerio" class="site-header__link" data-section="ministerio" role="menuitem">Ministério</a>
+        </li>
+        <li role="none">
+          <a href="{% url 'public:home' %}#mensagens" class="site-header__link" data-section="mensagens" role="menuitem">Palavra</a>
+        </li>
+        <li role="none">
+          <a href="{% url 'public:home' %}#galeria" class="site-header__link" data-section="galeria" role="menuitem">Galeria</a>
+        </li>
+        <li role="none">
+          <a href="{% url 'public:home' %}#contato" class="site-header__link" data-section="contato" role="menuitem">Contato</a>
+        </li>
+      </ul>
     </nav>
+
+    <!-- Ações à Direita: Botão Cultos + Área de Conta -->
+    <div class="site-header__actions">
+      <a href="{% url 'public:home' %}#cultos" class="site-header__cta" aria-label="Ir para horários de cultos">
+        Cultos
+      </a>
+
+      <!-- Área de Conta (Dinâmica via JS / Firebase + Fallback Django) -->
+      <div class="site-header__account" id="site-header-account">
+        <!-- Sininho de Notificações (Etapa 5) -->
+        <div class="site-header__bell-wrap" id="header-bell-container" style="display: none;">
+          <button type="button" 
+                  class="site-header__bell-btn" 
+                  id="header-bell-btn" 
+                  aria-label="Notificações e avisos" 
+                  aria-expanded="false" 
+                  aria-controls="header-notifications-dropdown">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            <span class="site-header__badge" id="header-unread-count" aria-live="polite" style="display: none;">0</span>
+          </button>
+          
+          <!-- Dropdown do Sininho -->
+          <div class="site-header__dropdown" id="header-notifications-dropdown" role="region" aria-label="Quadro de Notificações" aria-hidden="true">
+            <div class="site-header__dropdown-header">
+              <span class="site-header__dropdown-title">Avisos & Transmissões</span>
+              <button type="button" class="site-header__btn-mark-all" id="btn-mark-all-read">Marcar lidas</button>
+            </div>
+            <div class="site-header__dropdown-list" id="header-notifications-list">
+              <p class="site-header__empty-notif">Nenhuma nova notificação no momento.</p>
+            </div>
+            <div class="site-header__dropdown-footer">
+              <a href="{% url 'public:home' %}#avisos" class="site-header__link-all-avisos">Ver todos os avisos</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Área de Usuário: Deslogado vs Logado -->
+        <div class="site-header__auth-slot" id="header-auth-slot">
+          {% if user.is_authenticated %}
+            <div class="site-header__user-menu">
+              <button type="button" class="site-header__avatar-btn" id="header-avatar-btn" aria-expanded="false" aria-controls="header-user-dropdown" aria-label="Menu do usuário">
+                <span class="site-header__avatar-fallback">{{ user.first_name|default:user.username|slice:":1"|upper }}</span>
+              </button>
+              <div class="site-header__dropdown site-header__dropdown--user" id="header-user-dropdown" aria-hidden="true">
+                <div class="site-header__user-info">
+                  <strong>{{ user.get_full_name|default:user.username }}</strong>
+                  <span class="site-header__user-role">{% if user.is_staff or user.is_superuser %}Administrador{% else %}Membro{% endif %}</span>
+                </div>
+                <hr class="site-header__divider">
+                <a href="/perfil/" class="site-header__dropdown-item">Meu Perfil</a>
+                {% if user.is_staff or user.is_superuser %}
+                  <a href="/painel/" class="site-header__dropdown-item">Painel de Gestão</a>
+                {% endif %}
+                <hr class="site-header__divider">
+                <a href="/painel/logout/" class="site-header__dropdown-item site-header__dropdown-item--danger" id="btn-logout-header">Sair</a>
+              </div>
+            </div>
+          {% else %}
+            <div class="site-header__guest-links">
+              <a href="/entrar/" class="site-header__btn-login">Entrar</a>
+              <a href="/cadastro/" class="site-header__btn-register">Cadastrar</a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Botão Hambúrguer Mobile (< 1024px) -->
+      <button type="button" 
+              class="site-header__toggle" 
+              id="site-header-toggle"
+              aria-expanded="false" 
+              aria-controls="site-mobile-panel" 
+              aria-label="Abrir menu de navegação">
+        <span class="site-header__hamburger-bar" aria-hidden="true"></span>
+        <span class="site-header__hamburger-bar" aria-hidden="true"></span>
+        <span class="site-header__hamburger-bar" aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Painel Mobile (Drawer Lateral / Tela Cheia) -->
+  <div class="site-header__mobile-panel" id="site-mobile-panel" aria-hidden="true">
+    <div class="site-header__mobile-backdrop" id="site-mobile-backdrop"></div>
+    <div class="site-header__mobile-drawer" role="dialog" aria-modal="true" aria-label="Menu do Ministério Luz da Palavra">
+      <div class="site-header__mobile-top">
+        <a href="{% url 'public:home' %}" class="site-header__mobile-logo">
+          <img src="{% static 'images/logo-mlp.png' %}" alt="Ministério Luz da Palavra" width="130" height="46">
+        </a>
+        <button type="button" class="site-header__mobile-close" id="site-mobile-close" aria-label="Fechar menu">
+          &times;
+        </button>
+      </div>
+
+      <nav class="site-header__mobile-nav" aria-label="Navegação Móvel">
+        <ul class="site-header__mobile-list">
+          <li><a href="{% url 'public:home' %}" class="site-header__mobile-link active" data-section="inicio">Início</a></li>
+          <li><a href="{% url 'public:home' %}#ministerio" class="site-header__mobile-link" data-section="ministerio">Ministério</a></li>
+          <li><a href="{% url 'public:home' %}#mensagens" class="site-header__mobile-link" data-section="mensagens">Palavra</a></li>
+          <li><a href="{% url 'public:home' %}#galeria" class="site-header__mobile-link" data-section="galeria">Galeria</a></li>
+          <li><a href="{% url 'public:home' %}#contato" class="site-header__mobile-link" data-section="contato">Contato</a></li>
+          <li><a href="{% url 'public:home' %}#avisos" class="site-header__mobile-link" data-section="avisos">Quadro de Avisos</a></li>
+        </ul>
+      </nav>
+
+      <div class="site-header__mobile-footer">
+        <a href="{% url 'public:home' %}#cultos" class="site-header__mobile-cta">
+          Programação de Cultos
+        </a>
+
+        <div class="site-header__mobile-account" id="site-mobile-account-slot">
+          {% if user.is_authenticated %}
+            <div class="site-header__mobile-user-box">
+              <span>Olá, <strong>{{ user.first_name|default:user.username }}</strong></span>
+              <div class="site-header__mobile-user-links">
+                <a href="/perfil/">Meu Perfil</a>
+                {% if user.is_staff or user.is_superuser %}
+                  <a href="/painel/">Painel Admin</a>
+                {% endif %}
+                <a href="/painel/logout/" style="color: #FF5252;">Sair</a>
+              </div>
+            </div>
+          {% else %}
+            <div class="site-header__mobile-auth-grid">
+              <a href="/entrar/" class="btn btn-outline-gold" style="width: 100%; text-align: center;">Entrar</a>
+              <a href="/cadastro/" class="btn btn-gold" style="width: 100%; text-align: center;">Cadastrar</a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
   </div>
 </header>

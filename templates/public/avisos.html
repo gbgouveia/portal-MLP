@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Quadro Geral de Avisos — Ministério Luz da Palavra{% endblock %}
+
+{% block content %}
+<section class="hero-editorial" style="padding: var(--space-3xl) 0 var(--space-2xl);">
+  <div class="container container-narrow" style="text-align: center;">
+    <span class="badge-editorial badge-dark" style="margin-bottom: 1rem;">Comunicação Oficial</span>
+    <h1 class="hero-title" style="font-size: 2.8rem; margin-bottom: 1rem;">
+      Quadro de Avisos
+    </h1>
+    <p class="font-serif" style="font-size: 1.15rem; font-style: italic; color: var(--color-ivory-warm); line-height: 1.6;">
+      Informativos, eventos, celebrações e comunicados oficiais da congregação.
+    </p>
+  </div>
+</section>
+
+<section class="section-editorial">
+  <div class="container">
+    
+    <!-- Filtros por Categoria -->
+    <div style="display: flex; justify-content: center; gap: 0.75rem; margin-bottom: var(--space-2xl); flex-wrap: wrap;">
+      <button type="button" class="btn btn-sm btn-gold filter-btn active" data-type="todos">Todos os Avisos</button>
+      <button type="button" class="btn btn-sm btn-outline filter-btn" data-type="geral">Geral</button>
+      <button type="button" class="btn btn-sm btn-outline filter-btn" data-type="live">Transmissões</button>
+      <button type="button" class="btn btn-sm btn-outline filter-btn" data-type="evento">Eventos</button>
+      <button type="button" class="btn btn-sm btn-outline filter-btn" data-type="urgente">Urgentes</button>
+    </div>
+
+    <!-- Grade de Avisos -->
+    <div id="avisos-board-grid" class="avisos-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+      <div class="aviso-card aviso-card--destaque" style="background: #FFF; border: 1px solid rgba(191, 135, 31, 0.3); border-radius: 8px; padding: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 4px solid #BF871F;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+          <span class="badge-editorial" style="background: rgba(191, 135, 31, 0.15); color: #8C4303; border-color: #BF871F;">GERAL</span>
+          <span style="font-size: 0.78rem; color: #8C4303; font-weight: 700;">★ Fixado</span>
+        </div>
+        <h3 class="font-display" style="font-size: 1.25rem; color: #100904; margin-bottom: 0.5rem;">Bem-vindo ao Portal Oficial MLP</h3>
+        <p style="font-size: 0.92rem; color: #555; line-height: 1.6; margin-bottom: 1rem;">
+          Acompanhe aqui todas as comunicações oficiais, programação das celebrações e avisos para a congregação.
+        </p>
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: #888;">
+          <span>Secretaria MLP</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

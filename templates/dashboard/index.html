@@ -39,6 +39,12 @@
   </div>
 
   <div class="stat-card">
+    <span class="stat-label">Fotos da Órbita 3D</span>
+    <span class="stat-value" style="color: var(--color-gold);">{{ hero_photo_count }}</span>
+    <span class="stat-sub"><a href="{% url 'dashboard:hero_photos_list' %}" style="color: var(--color-wine); text-decoration: underline;">Gerenciar na Hero &rarr;</a></span>
+  </div>
+
+  <div class="stat-card">
     <span class="stat-label">Transmissão ao Vivo</span>
     <div style="margin: 0.25rem 0;">
       {% if live_stream %}

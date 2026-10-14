@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Entrar — Ministério Luz da Palavra{% endblock %}
+
+{% block content %}
+<section class="section-editorial" style="min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: clamp(4rem, 6vw, 6rem) 1rem;">
+  <div class="container container-narrow" style="max-width: 460px; margin: 0 auto; width: 100%;">
+    
+    <div style="background: var(--color-white); border: 1px solid var(--color-ivory-border); border-top: 4px solid var(--color-gold); border-radius: 8px; padding: clamp(1.5rem, 4vw, 2.5rem); box-shadow: var(--shadow-card);">
+      
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <span class="badge-editorial" style="margin-bottom: 0.75rem;">Acesso de Membro</span>
+        <h1 class="font-display" style="font-size: 1.85rem; color: var(--color-wine); margin-bottom: 0.5rem;">Entrar na Conta</h1>
+        <p style="font-size: 0.92rem; color: var(--color-gray-doc); line-height: 1.5;">
+          Acesse seu perfil de membro, notificações e avisos da congregação.
+        </p>
+      </div>
+
+      <!-- Alertas -->
+      <div id="login-alert-box" style="display: none; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem; font-size: 0.9rem; line-height: 1.5;"></div>
+
+      <form id="form-login" novalidate>
+        <!-- E-mail -->
+        <div style="margin-bottom: 1.25rem;">
+          <label for="login-email" style="display: block; font-size: 0.88rem; font-weight: 600; color: var(--color-wine); margin-bottom: 0.4rem;">
+            E-mail
+          </label>
+          <input type="email" 
+                 id="login-email" 
+                 name="email" 
+                 class="form-control" 
+                 required 
+                 autocomplete="email"
+                 placeholder="seuemail@exemplo.com"
+                 style="width: 100%; min-height: 44px; padding: 0.65rem 1rem; font-size: 16px; border: 1px solid var(--color-ivory-border); border-radius: 6px; background: var(--color-ivory-warm); color: var(--color-mlp-text);">
+        </div>
+
+        <!-- Senha -->
+        <div style="margin-bottom: 1.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+            <label for="login-senha" style="font-size: 0.88rem; font-weight: 600; color: var(--color-wine);">
+              Senha
+            </label>
+            <a href="#" id="link-esqueci-senha" style="font-size: 0.8rem; color: var(--color-gold); text-decoration: none;">Esqueceu a senha?</a>
+          </div>
+          <input type="password" 
+                 id="login-senha" 
+                 name="senha" 
+                 class="form-control" 
+                 required 
+                 autocomplete="current-password"
+                 placeholder="Digite sua senha"
+                 style="width: 100%; min-height: 44px; padding: 0.65rem 1rem; font-size: 16px; border: 1px solid var(--color-ivory-border); border-radius: 6px; background: var(--color-ivory-warm); color: var(--color-mlp-text);">
+        </div>
+
+        <!-- Botão Entrar -->
+        <button type="submit" 
+                id="btn-sub-login" 
+                class="btn btn-gold" 
+                style="width: 100%; min-height: 48px; font-size: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; justify-content: center;">
+          <span id="btn-login-text">Entrar</span>
+          <span id="btn-login-spinner" style="display: none;">Autenticando...</span>
+        </button>
+      </form>
+
+      <div style="margin-top: 1.5rem; text-align: center; font-size: 0.88rem; color: var(--color-gray-doc); border-top: 1px solid var(--color-ivory-border); padding-top: 1.25rem;">
+        Ainda não é cadastrado? 
+        <a href="{% url 'public:cadastro' %}" style="color: var(--color-gold); font-weight: 600; text-decoration: none;">Cadastre-se gratuitamente &rarr;</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script type="module">
+  import { loginMembro, getFriendlyErrorMessage } from "{% static 'js/firebase/auth-service.js' %}";
+
+  const form = document.getElementById("form-login");
+  const alertBox = document.getElementById("login-alert-box");
+  const btnSub = document.getElementById("btn-sub-login");
+  const btnText = document.getElementById("btn-login-text");
+  const btnSpinner = document.getElementById("btn-login-spinner");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    alertBox.style.display = "none";
+
+    const email = document.getElementById("login-email").value.trim();
+    const senha = document.getElementById("login-senha").value;
+
+    if (!email || !senha) {
+      showAlert("Por favor, preencha o e-mail e a senha.", "error");
+      return;
+    }
+
+    btnSub.disabled = true;
+    btnText.style.display = "none";
+    btnSpinner.style.display = "inline";
+
+    try {
+      const user = await loginMembro(email, senha);
+      showAlert("Login realizado com sucesso! Redirecionando...", "success");
+      setTimeout(() => {
+        window.location.href = "/perfil/";
+      }, 1000);
+    } catch (err) {
+      console.error(err);
+      showAlert(getFriendlyErrorMessage(err), "error");
+      btnSub.disabled = false;
+      btnText.style.display = "inline";
+      btnSpinner.style.display = "none";
+    }
+  });
+
+  function showAlert(msg, type) {
+    alertBox.textContent = msg;
+    alertBox.style.display = "block";
+    if (type === "success") {
+      alertBox.style.background = "#E8F5E9";
+      alertBox.style.color = "#2E7D32";
+      alertBox.style.border = "1px solid #A5D6A7";
+    } else {
+      alertBox.style.background = "#FFEBEE";
+      alertBox.style.color = "#C62828";
+      alertBox.style.border = "1px solid #FFCDD2";
+    }
+  }
+</script>
+{% endblock %}

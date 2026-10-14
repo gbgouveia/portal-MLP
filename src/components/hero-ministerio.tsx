@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { ChevronDown, Menu, X } from "lucide-react";
-import { TiltedGridHero } from "@/components/ui/tilted-grid-hero";
+import { TiltedGridHero, type TiltedGridImage } from "@/components/ui/tilted-grid-hero";
 import { ministryImages } from "@/data/ministry-images";
 import "./hero-ministerio.css";
 
@@ -41,6 +41,8 @@ export type HeroMinisterioProps = {
   activeHref?: string;
   /** id da seção seguinte, para a seta de rolagem. */
   nextSectionId?: string;
+  /** Fotografias em órbita na galeria 3D configuradas no painel. */
+  images?: TiltedGridImage[];
 };
 
 export function HeroMinisterio({
@@ -48,9 +50,11 @@ export function HeroMinisterio({
   navItems,
   activeHref,
   nextSectionId = "next-section",
+  images,
 }: HeroMinisterioProps) {
   const base = getBase();
   const effectivePortrait = portraitSrc || `${base}/static/images/pastor-leonel.png`;
+  const effectiveImages = images && images.length > 0 ? images : ministryImages;
   
   const effectiveNav: NavItem[] = navItems || [
     { label: "Início", href: `${base}/` },
@@ -72,7 +76,7 @@ export function HeroMinisterio({
   return (
     <section className="relative isolate bg-[#080605]">
       <TiltedGridHero
-        images={ministryImages}
+        images={effectiveImages}
         speed={4}
         {...preset}
         className="h-[100vh] h-[100svh] min-h-[560px] w-full bg-[#080605]"
@@ -151,7 +155,7 @@ export function HeroMinisterio({
 
         {/* Título */}
         <div className="absolute inset-x-0 bottom-[10%] z-20 flex flex-col items-center px-4 text-center">
-          <span className="lp-sans text-[clamp(.7rem,1.35vw,1.3rem)] font-light uppercase tracking-[.5em] pl-[.5em] text-[#F2F1F0]">
+          <span className="lp-sans text-[clamp(1.1rem,2.6vw,2.4rem)] font-light uppercase tracking-[.4em] sm:tracking-[.5em] pl-[.4em] sm:pl-[.5em] text-[#F2F1F0]">
             Ministério
           </span>
           <h1 className="lp-serif lp-gold-text mt-1 text-[clamp(2.6rem,9vw,8.5rem)] font-medium leading-[1.05] drop-shadow-[0_6px_30px_rgba(0,0,0,.6)]">
@@ -185,67 +189,7 @@ export function HeroMinisterio({
           <ChevronDown className="h-5 w-5" />
         </a>
 
-        {/* Cabeçalho */}
-        <header className="absolute inset-x-0 top-0 z-30">
-          <nav
-            aria-label="Principal"
-            className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5 md:justify-center"
-          >
-            <ul className="lp-sans hidden items-center gap-10 text-[.95rem] tracking-wide text-[#F2F1F0] md:flex lg:gap-14">
-              {effectiveNav.map((item) => {
-                const active = item.href === effectiveActive;
-                return (
-                  <li key={item.href} className="relative">
-                    <a
-                      href={item.href}
-                      aria-current={active ? "page" : undefined}
-                      className={`lp-focus pb-2 transition-colors hover:text-[#F2D16D] ${active ? "text-[#F2D16D]" : ""}`}
-                    >
-                      {item.label}
-                    </a>
-                    {active && (
-                      <span aria-hidden className="absolute inset-x-0 -bottom-0.5 h-px bg-[#F2D16D] shadow-[0_0_8px_#F2D16D]" />
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-
-            <button
-              type="button"
-              className="lp-focus ml-auto rounded-full p-2 text-[#F2F1F0] md:hidden"
-              aria-expanded={menuOpen}
-              aria-controls="menu-movel"
-              aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
-              onClick={() => setMenuOpen((o) => !o)}
-            >
-              {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
-          </nav>
-
-          {menuOpen && (
-            <ul
-              id="menu-movel"
-              className="lp-sans mx-4 rounded-xl border border-[#F2D16D]/25 bg-[#080605]/95 p-3 text-[#F2F1F0] backdrop-blur md:hidden"
-            >
-              {effectiveNav.map((item) => {
-                const active = item.href === effectiveActive;
-                return (
-                  <li key={item.href}>
-                    <a
-                      href={item.href}
-                      aria-current={active ? "page" : undefined}
-                      onClick={() => setMenuOpen(false)}
-                      className={`lp-focus block rounded-lg px-4 py-3 ${active ? "text-[#F2D16D]" : "hover:text-[#F2D16D]"}`}
-                    >
-                      {item.label}
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </header>
+        {/* Cabeçalho interno removido: a navegação principal é gerenciada exclusivamente pelo Cabeçalho Oficial Fixo do Portal */}
       </TiltedGridHero>
     </section>
   );

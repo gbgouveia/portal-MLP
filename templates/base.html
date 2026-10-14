@@ -39,13 +39,23 @@
   <!-- Lightbox Modal Global -->
   {% include 'components/lightbox.html' %}
 
-  <!-- Navegação Flutuante Auxiliar (Mac OS Dock 21st.dev) -->
-  {% include 'components/dock.html' %}
+  <!-- Configuração Pública do Firebase (Client-side) -->
+  {{ FIREBASE_CONFIG|json_script:"firebase-config" }}
+  <script>
+    try {
+      const configEl = document.getElementById('firebase-config');
+      const parsed = configEl ? JSON.parse(configEl.textContent) : null;
+      window.MLP_FIREBASE_CONFIG = (parsed && parsed.apiKey && !parsed.apiKey.includes('PLACEHOLDER')) ? parsed : null;
+      window.MLP_FIREBASE_VAPID_KEY = "{{ FIREBASE_VAPID_KEY }}";
+    } catch (e) {
+      window.MLP_FIREBASE_CONFIG = null;
+    }
+  </script>
 
   <!-- Scripts Centrais -->
   <script src="{% static 'js/core/app.js' %}"></script>
-  <script src="{% static 'js/core/dock-interactive.js' %}"></script>
   <script src="{% static 'js/gallery/lightbox.js' %}"></script>
+  <script type="module" src="{% static 'js/firebase/app-firebase.js' %}"></script>
   
   <!-- Bibliotecas de Movimento sob Demanda (CDNs seguras com fallback) -->
   {% block vendor_scripts %}
