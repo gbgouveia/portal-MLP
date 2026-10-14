@@ -3,23 +3,24 @@
    Linguagem visual institucional, histórica e humana.
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap');
 
 :root {
   /* ========================================================================
      PALETA OFICIAL DO MINISTÉRIO LUZ DA PALAVRA (MLP)
      ======================================================================== */
-  /* Paleta Oficial do Ministério Luz da Palavra */
   --color-mlp-gold-light: #F2D16D;    /* Dourado luminoso: destaques, pequenos detalhes e ênfases */
-  --color-mlp-gold: #BF871F;          /* Ouro envelhecido: links ativos, chamadas secundárias e navegação */
+  --color-mlp-gold: #BF871F;          /* Ouro envelhecido: bordas, botões e acentos */
+  --color-mlp-gold-text: #8A5F12;     /* Ouro escurecido para texto sobre fundo claro (WCAG AA >= 4.5:1) */
   --color-mlp-brown-dark: #8C4303;    /* Marrom profundo: títulos, botões principais, identidade e contraste */
   --color-mlp-earth: #A6754B;         /* Terra acolhedora: elementos secundários, bordas, superfícies auxiliares */
-  --color-mlp-background: #F2F1F0;    /* Cinza-marfim: fundo principal e áreas de leitura */
+  --color-mlp-background: #F2F1F0;    /* Fundo claro institucional */
+  --color-mlp-hero-black: #080605;    /* Preto canônico da hero */
   --color-mlp-surface: #FFFFFF;       /* Superfície branca para cards e leitura nobre */
   --color-mlp-text: #30271F;          /* Texto principal em alto contraste */
   --color-mlp-text-muted: #6A625A;    /* Cinza documental para textos auxiliares */
   --color-mlp-border: #E3DCD4;        /* Bordas finas e divisores editoriais */
-  --color-mlp-text-on-dark: #F7F2E9; /* Texto claro para fundos escuros */
+  --color-mlp-text-on-dark: #F2F1F0;  /* Texto claro para fundos escuros */
   --color-mlp-border-on-dark: rgba(242, 209, 109, 0.18); /* Borda em fundos escuros */
   --mlp-radius-sm: 8px;
   --mlp-radius-md: 14px;
@@ -56,10 +57,12 @@
   --status-published: #2E6B48;
   --status-archived: #A83E38;
 
-  /* Tipografia */
-  --font-display: 'Cinzel', serif;
-  --font-serif: 'Libre Baskerville', Georgia, serif;
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  /* Tipografia Oficial (Playfair Display / Montserrat / Great Vibes) */
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-script: 'Great Vibes', cursive;
+  --font-body: var(--font-sans);
 
   /* Escala de Espaçamento */
   --space-2xs: 0.25rem;
@@ -270,9 +273,9 @@ h1, h2, h3, h4 {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--color-gold);
+  color: var(--color-mlp-gold-text, #8A5F12);
   background-color: var(--color-gold-tint);
-  border: 1px solid var(--color-gold-border);
+  border: 1px solid rgba(191, 135, 31, 0.35);
   border-radius: 2px;
 }
 
@@ -291,7 +294,7 @@ h1, h2, h3, h4 {
   padding: 0.75rem 1.6rem;
   font-family: var(--font-sans);
   font-size: 0.88rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.02em;
   text-decoration: none;
   border-radius: 2px;
@@ -314,13 +317,14 @@ h1, h2, h3, h4 {
 
 .btn-gold {
   background-color: var(--color-gold);
-  color: var(--color-white);
+  color: #080605;
   border-color: var(--color-gold);
+  font-weight: 600;
 }
 
 .btn-gold:hover {
   background-color: var(--color-gold-hover);
-  color: var(--color-ivory);
+  color: #080605;
   transform: translateY(-1px);
 }
 
@@ -381,6 +385,167 @@ h1, h2, h3, h4 {
   margin-top: 0.5rem;
   border-left: 2px solid var(--color-gold);
   padding-left: 0.65rem;
+}
+
+/* Link de salto acessível (Skip link) */
+.skip-link {
+  position: absolute;
+  top: -120px;
+  left: 1rem;
+  z-index: 9999;
+  padding: 0.75rem 1.25rem;
+  background-color: var(--color-mlp-brown-dark);
+  color: #F2D16D;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 2px solid var(--color-gold);
+  border-radius: 4px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 1rem;
+  outline: none;
+}
+
+/* Estados Interativos Globais */
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:disabled,
+.btn[aria-disabled="true"],
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed !important;
+  pointer-events: none;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* Estado de Carregamento nos Botões */
+.btn.is-loading,
+button.is-loading {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+}
+
+.btn.is-loading::after,
+button.is-loading::after {
+  content: '';
+  position: absolute;
+  width: 1.15rem;
+  height: 1.15rem;
+  top: calc(50% - 0.575rem);
+  left: calc(50% - 0.575rem);
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: mlp-spin 0.65s linear infinite;
+}
+
+@keyframes mlp-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Estados de Formulários (Foco, Erro, Validação e Desabilitado) */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="url"],
+input[type="date"],
+select,
+textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  color: var(--color-mlp-text);
+  background-color: var(--color-mlp-surface);
+  border: 1px solid var(--color-mlp-border);
+  border-radius: var(--mlp-radius-sm);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+input:hover:not(:disabled),
+select:hover:not(:disabled),
+textarea:hover:not(:disabled) {
+  border-color: rgba(191, 135, 31, 0.5);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px rgba(191, 135, 31, 0.22);
+}
+
+input:disabled,
+select:disabled,
+textarea:disabled {
+  background-color: #EFECE8;
+  color: var(--color-mlp-text-muted);
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
+.is-invalid,
+input.is-invalid,
+select.is-invalid,
+textarea.is-invalid {
+  border-color: #D32F2F !important;
+  box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.15) !important;
+}
+
+.invalid-feedback {
+  display: block;
+  font-size: 0.82rem;
+  color: #B71C1C;
+  font-weight: 500;
+  margin-top: 0.35rem;
+}
+
+.valid-feedback {
+  display: block;
+  font-size: 0.82rem;
+  color: #2E7D32;
+  font-weight: 500;
+  margin-top: 0.35rem;
+}
+
+/* Estado Vazio Padronizado */
+.empty-state-editorial {
+  text-align: center;
+  padding: var(--space-3xl) var(--space-lg);
+  background: var(--color-ivory-warm);
+  border: 1px dashed var(--color-gold-border);
+  border-radius: var(--mlp-radius-md);
+  margin: var(--space-xl) auto;
+  max-width: 640px;
+}
+
+.empty-state-editorial svg {
+  color: var(--color-gold);
+  margin-bottom: var(--space-sm);
+}
+
+.empty-state-editorial h3 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--color-wine);
+  margin-bottom: 0.5rem;
+}
+
+.empty-state-editorial p {
+  font-size: 0.92rem;
+  color: var(--color-mlp-text-muted);
+  line-height: 1.6;
 }
 
 /* Suporte Obrigatório a Prefers-Reduced-Motion */

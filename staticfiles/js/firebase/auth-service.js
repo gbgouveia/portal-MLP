@@ -365,7 +365,7 @@ export function initHeaderAuthSync() {
 
       try {
         const idTokenResult = await user.getIdTokenResult();
-        isAdmin = idTokenResult.claims.admin === true || idTokenResult.claims.role === "admin";
+        isAdmin = idTokenResult.claims.admin === true;
 
         const membroSnap = await getDoc(doc(db, "membros", user.uid));
         if (membroSnap.exists()) {

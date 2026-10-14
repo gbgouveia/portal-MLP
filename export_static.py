@@ -71,6 +71,13 @@ def export_site(base_path='portal-MLP', output_dir='dist'):
 
     # 4. Mapeamento de rotas canônicas
     client = Client()
+
+    # FORCE_SCRIPT_NAME makes reverse() prepend the prefix (e.g. /portal-MLP/...),
+    # but Django's test client resolves against urlconf which has no prefix.
+    # We must strip the prefix before calling client.get().
+    from django.conf import settings as djsettings
+    _prefix = getattr(djsettings, 'FORCE_SCRIPT_NAME', '') or ''
+
     routes = [
         (reverse('public:home'), 'index.html'),
         (reverse('public:legacy'), 'legado-pastor-leonel/index.html'),
@@ -108,9 +115,12 @@ def export_site(base_path='portal-MLP', output_dir='dist'):
         file_path = out / file_rel
         file_path.parent.mkdir(parents=True, exist_ok=True)
 
-        # Com FORCE_SCRIPT_NAME ativo, reverse() já retorna URLs prefixadas.
-        # O test client espera a URL completa com o prefixo.
-        resp = client.get(url)
+        # Strip FORCE_SCRIPT_NAME prefix so test client resolves correctly
+        request_url = url
+        if _prefix and request_url.startswith(_prefix):
+            request_url = request_url[len(_prefix):] or '/'
+
+        resp = client.get(request_url)
         if resp.status_code == 200:
             content = resp.content.decode('utf-8')
             with open(file_path, 'w', encoding='utf-8') as f:
