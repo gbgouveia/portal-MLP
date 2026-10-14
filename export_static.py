@@ -38,6 +38,15 @@ def export_site(base_path='portal-MLP', output_dir='dist'):
 
     # 1. Coleta e cópia de arquivos estáticos
     print("\n1. Copiando arquivos estáticos...")
+    if (BASE_DIR / 'package.json').exists():
+        try:
+            import subprocess
+            print("   Compilando assets Vite/React (Hero 3D)...")
+            subprocess.run('npm run build', check=True, cwd=str(BASE_DIR), shell=True)
+            print("   [OK] Bundle Vite/React compilado com sucesso")
+        except Exception as e:
+            print(f"   [AVISO] Nao foi possivel compilar bundle Vite: {e}")
+
     from django.core.management import call_command
     call_command('collectstatic', interactive=False, verbosity=0)
 

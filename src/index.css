@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --mlp-gold-light: #F2D16D;
+    --mlp-gold: #BF871F;
+    --mlp-brown-deep: #8C4303;
+    --mlp-brown-soft: #A6754B;
+    --mlp-white-warm: #F2F1F0;
+    --mlp-black-cine: #080605;
+  }
+}

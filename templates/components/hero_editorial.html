@@ -1,91 +1,74 @@
 {% load static %}
 <!-- ==========================================================================
-     HERO SECTION 2 EDITORIAL — MINISTÉRIO LUZ DA PALAVRA
-     Referência 21st.dev: hero-section-2.tsx adaptado para Django Templates
-     Composição split-screen, máscara de recorte animada e tipografia editorial.
+     HERO CINEMATOGRÁFICA 3D — MINISTÉRIO LUZ DA PALAVRA
+     Fiel à referência visual original com o Pastor Leonel real,
+     galeria orbital 3D cilíndrica, anel de luz dourado e tipografia editorial oficial.
      ========================================================================== -->
-<section class="hero-editorial hero-section-2" aria-label="Abertura Institucional do Ministério Luz da Palavra">
-  <div class="container hero-grid">
+<div id="tilted-grid-hero-root"
+     data-portrait="{% if pastoral.portrait %}{{ pastoral.portrait.url }}{% else %}{% static 'images/pastor-leonel.png' %}{% endif %}"
+     data-home-url="{% url 'public:home' %}"
+     data-ministry-url="{% url 'public:legacy' %}"
+     data-word-url="{% url 'public:media' %}"
+     data-gallery-url="{% url 'public:gallery' %}"
+     data-contact-url="{% url 'public:contact' %}">
+
+  <!-- Fallback semântico acessível server-side (renderizado antes do carregamento do JS) -->
+  <section class="hero-cinematic-fallback relative min-h-[100svh] w-full bg-[#080605] text-[#F2F1F0] flex flex-col items-center justify-between overflow-hidden px-4 select-none"
+           aria-label="Abertura Institucional do Ministério Luz da Palavra">
     
-    <!-- Coluna de Conteúdo Editorial -->
-    <div class="hero-content">
-      <div class="hero-period-tag" data-hero-elem="tag">
-        <span class="editorial-divider-gem"></span>
-        <span>Desde {{ institutional.founding_year|default:1970 }} &bull; Tradição, Fé e Continuidade</span>
+    <!-- Navegação Superior Fiel à Referência -->
+    <nav class="relative z-30 w-full pt-6 pb-2 px-6 flex justify-center items-center">
+      <div class="flex items-center gap-6 sm:gap-10 text-xs sm:text-sm tracking-widest text-[#F2F1F0]/75">
+        <a href="{% url 'public:home' %}" class="text-[#F2D16D] font-medium border-b-2 border-[#F2D16D] pb-1">Início</a>
+        <a href="{% url 'public:legacy' %}">Ministério</a>
+        <a href="{% url 'public:media' %}">Palavra</a>
+        <a href="{% url 'public:gallery' %}">Galeria</a>
+        <a href="{% url 'public:contact' %}">Contato</a>
+      </div>
+    </nav>
+
+    <!-- Fundo de Iluminação Dourada -->
+    <div class="pointer-events-none absolute inset-0 z-0"
+         style="background: radial-gradient(circle at 50% 45%, rgba(242, 209, 109, 0.22) 0%, rgba(191, 135, 31, 0.15) 35%, rgba(140, 67, 3, 0.08) 65%, #080605 85%);">
+    </div>
+
+    <!-- Retrato Real do Pastor e Tipografia Editorial -->
+    <div class="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto my-auto">
+      <div class="relative mb-2">
+        <div class="absolute -inset-2 rounded-full opacity-60 blur-xl"
+             style="background: radial-gradient(circle, rgba(242, 209, 109, 0.45) 0%, rgba(191, 135, 31, 0.2) 60%, transparent 80%);"></div>
+        <img src="{% if pastoral.portrait %}{{ pastoral.portrait.url }}{% else %}{% static 'images/hero/pastor-leonel-real.webp' %}{% endif %}"
+             alt="Pastor Leonel — Ministério Luz da Palavra"
+             class="relative w-[280px] sm:w-[350px] md:w-[410px] max-h-[60vh] h-auto object-contain mx-auto filter drop-shadow-[0_20px_45px_rgba(0,0,0,0.95)]"
+             loading="eager">
       </div>
 
-      <h1 class="hero-title" data-hero-elem="title">
-        Ministério<br>
-        <span class="text-gold-light">Luz da Palavra</span>
+      <span class="text-xs uppercase tracking-[0.45em] font-light text-[#F2F1F0] drop-shadow-md mb-1">
+        M I N I S T É R I O
+      </span>
+
+      <h1 class="font-serif text-4xl sm:text-6xl md:text-7xl font-normal tracking-tight my-2 leading-tight drop-shadow-lg"
+          style="color: #F2D16D; background: linear-gradient(180deg, #FFF6D6 0%, #F2D16D 45%, #BF871F 85%, #8C4303 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+        Luz da Palavra
       </h1>
 
-      <blockquote class="hero-quote" data-hero-elem="quote">
-        “{{ institutional.tagline|default:'Uma história construída pela fé. Um legado que atravessa gerações. Um ministério que continua.' }}”
-      </blockquote>
-
-      <p class="hero-subtext" data-hero-elem="subtext">
-        Uma congregação cristã forjada na fidelidade às Sagradas Escrituras, iniciada sob o pastoreio dedicado do Pastor Leonel na década de 1970 e preservada com vigor para as próximas gerações.
-      </p>
-
-      <div class="hero-actions" data-hero-elem="actions">
-        <a href="{% url 'public:legacy' %}" class="btn btn-gold">
-          Conhecer o Legado do Pr. Leonel &rarr;
-        </a>
-        <a href="{% url 'public:events' %}" class="btn btn-outline-light">
-          Grade de Cultos & Horários
-        </a>
-      </div>
-
-      <!-- Métricas Históricas Rápidas -->
-      <div class="hero-stats-strip" data-hero-elem="stats">
-        <div class="hero-stat-item">
-          <span class="hero-stat-number">+50</span>
-          <span class="hero-stat-label">Anos de Ministério</span>
-        </div>
-        <div class="hero-stat-divider"></div>
-        <div class="hero-stat-item">
-          <span class="hero-stat-number">1970</span>
-          <span class="hero-stat-label">Marco Fundacional</span>
-        </div>
-        <div class="hero-stat-divider"></div>
-        <div class="hero-stat-item">
-          <span class="hero-stat-number">100%</span>
-          <span class="hero-stat-label">Fidelidade Bíblica</span>
-        </div>
+      <div class="flex items-center justify-center gap-4 w-full my-2">
+        <span class="h-[1px] w-16 sm:w-28 bg-gradient-to-r from-transparent via-[#BF871F] to-[#F2D16D]"></span>
+        <span class="font-script text-2xl sm:text-3xl text-[#F2D16D] italic"
+              style="font-family: 'Playfair Display', Georgia, cursive;">
+          Pastor Leonel
+        </span>
+        <span class="h-[1px] w-16 sm:w-28 bg-gradient-to-l from-transparent via-[#BF871F] to-[#F2D16D]"></span>
       </div>
     </div>
 
-    <!-- Coluna Visual com Máscara de Recorte Editorial (Clip-Path Reveal) -->
-    <div class="hero-reveal-container" data-hero-elem="media">
-      <div class="hero-portrait-card">
-        <div class="hero-reveal-mask">
-          {% if pastoral.portrait %}
-            <img src="{{ pastoral.portrait.url }}" 
-                 alt="{{ pastoral.portrait_caption|default:'Retrato histórico do Pastor Leonel' }}" 
-                 class="hero-reveal-img"
-                 loading="eager">
-          {% else %}
-            <!-- Composição de Acervo Histórico quando foto ainda não foi carregada -->
-            <div class="hero-fallback-memorial">
-              <div class="brand-monogram brand-monogram-lg">MLP</div>
-              <p class="font-display fallback-title">Acervo Histórico</p>
-              <p class="fallback-subtitle">Registro Documental Oficial</p>
-            </div>
-          {% endif %}
-          
-          <!-- Selo Histórico Flutuante na Imagem -->
-          <div class="hero-image-badge" aria-hidden="true">
-            <span>Arquivo MLP &bull; 1970</span>
-          </div>
-        </div>
-
-        <div class="portrait-meta">
-          <strong class="portrait-name">{{ pastoral.full_name|default:"Pastor Leonel" }}</strong>
-          <span class="portrait-role">{{ pastoral.title|default:"Pastor Fundador" }} &bull; Início em {{ pastoral.ministry_start_year|default:1970 }}</span>
-          <p class="portrait-caption">{{ pastoral.portrait_caption|default:"Registro histórico preservado no arquivo memorial institucional." }}</p>
-        </div>
+    <!-- Botão de rolagem com seta sutil -->
+    <div class="relative z-20 pb-8 flex justify-center">
+      <div class="w-10 h-10 rounded-full border border-[#F2D16D]/60 flex items-center justify-center text-[#F2D16D]">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
       </div>
     </div>
-
-  </div>
-</section>
+  </section>
+</div>

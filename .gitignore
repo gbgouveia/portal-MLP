@@ -9,6 +9,10 @@ venv/
 ENV/
 .venv/
 
+# Node.js
+node_modules/
+.npm/
+
 # Static exporter output
 dist/
 

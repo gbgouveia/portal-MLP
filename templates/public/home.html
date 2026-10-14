@@ -3,6 +3,10 @@
 
 {% block title %}{{ institutional.name|default:"Ministério Luz da Palavra" }} — Legado Pastoral e História Institucional{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'hero-dist/hero-bundle.css' %}">
+{% endblock %}
+
 {% block content %}
 <!-- 1. Hero Section 2 Editorial (21st.dev adaptado) -->
 {% include 'components/hero_editorial.html' %}
@@ -25,7 +29,7 @@
 {% endif %}
 
 <!-- 3. Eixo Narrativo: O Legado Pastoral que Atravessa Gerações -->
-<section class="section-editorial bg-ivory-warm">
+<section id="next-section" class="section-editorial bg-ivory-warm">
   <div class="container">
     <div class="section-header-editorial">
       <span class="badge-editorial section-badge">Eixo Narrativo Central</span>
@@ -206,4 +210,21 @@
     </div>
   </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.body.classList.add('page-home');
+  window.addEventListener('scroll', () => {
+    const header = document.querySelector('.site-header');
+    if (header) {
+      if (window.scrollY > 40) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    }
+  });
+</script>
+<script type="module" src="{% static 'hero-dist/hero-bundle.js' %}"></script>
 {% endblock %}

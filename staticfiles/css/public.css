@@ -15,6 +15,57 @@
   transition: all var(--transition-fast);
 }
 
+/* Variante Cinematográfica da Home (Hero 3D Fiel à Referência) */
+.page-home .site-header {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background-color: rgba(8, 6, 5, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(191, 135, 31, 0.25);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+  transition: all 0.3s ease;
+}
+
+.page-home .site-header.scrolled {
+  display: block;
+}
+
+.page-home .brand-link,
+.page-home .brand-name {
+  color: #F2D16D;
+}
+
+.page-home .brand-sub {
+  color: #BF871F;
+}
+
+.page-home .nav-link {
+  color: #F2F1F0;
+}
+
+.page-home .nav-link:hover,
+.page-home .nav-link.active {
+  color: #F2D16D;
+}
+
+.page-home .nav-link.active::after {
+  background-color: #F2D16D;
+}
+
+.page-home .mobile-toggle {
+  color: #F2D16D;
+}
+
+/* Oculta dock flutuante na home para manter o rodapé da hero 100% fiel à referência */
+.page-home .mlp-dock {
+  display: none !important;
+}
+
 .header-inner {
   display: flex;
   align-items: center;

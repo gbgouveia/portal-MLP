@@ -1,0 +1,22 @@
+@import url("https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400&family=Playfair+Display:wght@500;600&display=swap");
+
+.lp-serif {
+  font-family: "Playfair Display", "Cormorant Garamond", Georgia, serif;
+}
+.lp-sans {
+  font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+}
+.lp-script {
+  font-family: "Great Vibes", "Allura", cursive;
+}
+.lp-gold-text {
+  background: linear-gradient(180deg, #f2d16d 8%, #e0a93b 55%, #bf871f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.lp-focus:focus-visible {
+  outline: 2px solid #f2d16d;
+  outline-offset: 4px;
+  border-radius: 2px;
+}
