@@ -19,4 +19,6 @@ urlpatterns = [
     path('entrar/', views.entrar_view, name='entrar'),
     path('perfil/', views.perfil_view, name='perfil'),
     path('avisos/', views.avisos_view, name='avisos'),
+    path('404/', views.custom_404_view, name='error_404'),
+    path('500/', views.custom_500_view, name='error_500'),
 ]

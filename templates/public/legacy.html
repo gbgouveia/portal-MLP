@@ -10,7 +10,6 @@
   <div id="memorial-three-canvas" class="three-canvas-container" aria-hidden="true"></div>
   
   <div class="container container-narrow text-center" style="position: relative; z-index: 2;">
-    <span class="badge-editorial badge-dark section-badge">Memória, Vocação e Ministério</span>
     <h1 class="hero-title mb-md">
       O Legado Pastoral do<br>
       <span class="text-gold-light">Pastor Leonel</span>
@@ -51,7 +50,6 @@
 
       <!-- Texto Biográfico Editorial -->
       <div>
-        <span class="badge-editorial section-badge">Trajetória e Vocação</span>
         <h2 class="section-title mb-lg">Caminhada Ministerial</h2>
 
         <p class="legacy-lead-text">
@@ -64,9 +62,12 @@
 
         {% if pastoral.core_values %}
           <div class="legacy-values-card">
-            <h3 class="font-display core-values-title">
-              Princípios Ministeriais Transmitidos
-            </h3>
+            <div class="core-values-header">
+              <h3 class="font-display core-values-title">
+                Princípios Ministeriais Transmitidos
+              </h3>
+              <span class="badge-unconfirmed">A confirmar</span>
+            </div>
             <p class="core-values-body">
               {{ pastoral.core_values }}
             </p>
@@ -81,10 +82,9 @@
 <section id="linha-do-tempo" class="section-editorial bg-ivory-warm">
   <div class="container">
     <div class="section-header-editorial">
-      <span class="badge-editorial section-badge">Cronologia Interativa</span>
-      <h2 class="section-title">Linha do Tempo Histórica</h2>
+      <h2 class="section-title">Marcos Históricos</h2>
       <p class="section-subtitle">
-        Acontecimentos e marcos confirmados da fundação nos anos 1970 até os dias atuais.
+        Acontecimentos e marcos da fundação nos anos 1970 até os dias atuais.
       </p>
     </div>
 
@@ -108,6 +108,9 @@
             <div class="timeline-header-meta">
               <span class="timeline-year">{{ m.formatted_date }}</span>
               <span class="timeline-decade-tag">{{ m.decade }}</span>
+              {% if m.year >= 1980 and m.year < 2020 %}
+                <span class="badge-unconfirmed">A confirmar</span>
+              {% endif %}
             </div>
 
             <h3 class="timeline-title">{{ m.title }}</h3>
@@ -175,7 +178,6 @@
 <section class="section-editorial">
   <div class="container container-narrow">
     <div class="section-header-editorial">
-      <span class="badge-editorial section-badge">Vozes da Comunidade</span>
       <h2 class="section-title">Testemunhos Autorizados</h2>
       <p class="section-subtitle">
         Depoimentos que testemunham o impacto espiritual e a integridade do ministério pastoral.

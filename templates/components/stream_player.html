@@ -7,7 +7,7 @@ Parâmetros aceitos via context ou with:
 - is_live: booleano indicando se é transmissão ao vivo
 - channel_id: ID do canal do YouTube para fallback (default: 'UCkvN5Uqsjhj6lSpIX5JhBpA')
 {% endcomment %}
-<div class="stream-player-container" style="position: relative; width: 100%; aspect-ratio: 16/9; background-color: #0c0806; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.45); border: 1px solid rgba(242, 209, 109, 0.2);">
+<div class="stream-player-container" style="position: relative; width: 100%; aspect-ratio: 16/9; background-color: #0c0806; color: #F2F1F0; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.45); border: 1px solid rgba(242, 209, 109, 0.2);">
   {% if video_id %}
     <iframe
       src="https://www.youtube-nocookie.com/embed/{{ video_id }}{% if is_live %}?autoplay=1&mute=0{% endif %}"

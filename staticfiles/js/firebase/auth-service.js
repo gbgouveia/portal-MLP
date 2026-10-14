@@ -26,7 +26,9 @@ import {
   onAuthStateChanged,
   sendEmailVerification,
   updateProfile,
-  deleteUser
+  deleteUser,
+  setPersistence,
+  browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   doc,
@@ -42,6 +44,96 @@ import {
   getDownloadURL,
   deleteObject
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+// Configuração explícita de persistência local (browserLocalPersistence)
+if (auth) {
+  setPersistence(auth, browserLocalPersistence).catch((err) => {
+    console.warn("[Auth] Não foi possível forçar browserLocalPersistence:", err.message);
+  });
+}
+
+// Promessa única global authReady que resolve na primeira emissão do onAuthStateChanged
+let _resolveAuthReady;
+export const authReady = new Promise((resolve) => {
+  _resolveAuthReady = resolve;
+});
+
+let _initialAuthEmitted = false;
+onAuthStateChanged(auth, (user) => {
+  if (!_initialAuthEmitted) {
+    _initialAuthEmitted = true;
+    _resolveAuthReady(user);
+  }
+});
+
+export async function waitForAuth() {
+  await authReady;
+  return auth.currentUser;
+}
+
+// Trava Anti-Loop em sessionStorage: detecta mais de 2 redirecionamentos entre /entrar e /perfil em 10s
+export function checkAntiLoop(currentPage) {
+  const KEY = "mlp_auth_loop_log";
+  const now = Date.now();
+  let entries = [];
+  try {
+    entries = JSON.parse(sessionStorage.getItem(KEY) || "[]");
+  } catch (e) {
+    entries = [];
+  }
+  // Mantém apenas saltos nos últimos 10 segundos
+  entries = entries.filter((e) => now - e.t < 10000);
+  entries.push({ p: currentPage, t: now });
+  sessionStorage.setItem(KEY, JSON.stringify(entries));
+
+  const authBounces = entries.filter((e) => e.p.includes("entrar") || e.p.includes("perfil"));
+  if (authBounces.length >= 3) {
+    console.error("[Anti-Loop] Trava ativada! Mais de 2 redirecionamentos detectados em 10s:", entries);
+    return true;
+  }
+  return false;
+}
+
+export function resetAntiLoop() {
+  sessionStorage.removeItem("mlp_auth_loop_log");
+}
+
+// Sanitização de parâmetro ?next= (apenas caminhos internos seguros que começam com "/")
+export function getSafeNextUrl(defaultUrl = "/perfil/") {
+  const params = new URLSearchParams(window.location.search);
+  const next = params.get("next");
+  if (next && next.startsWith("/") && !next.startsWith("//") && !next.startsWith("/\\")) {
+    return next;
+  }
+  return defaultUrl;
+}
+
+// Garante existência de documento membros/{uid} sem falhar ou deslogar
+export async function ensureMembroDoc(user) {
+  if (!user) return null;
+  try {
+    const userRef = doc(db, "membros", user.uid);
+    const snap = await getDoc(userRef);
+    if (!snap.exists()) {
+      const initialDoc = {
+        nome: user.displayName || (user.email ? user.email.split("@")[0] : "Membro"),
+        email: (user.email || "").toLowerCase(),
+        telefone: "",
+        fotoUrl: user.photoURL || null,
+        status: "ativo",
+        consentimentoWhatsapp: false,
+        consentimentoEmail: false,
+        criadoEm: serverTimestamp(),
+      };
+      await setDoc(userRef, initialDoc, { merge: true });
+      return initialDoc;
+    }
+    return snap.data();
+  } catch (err) {
+    console.warn("[Auth] Não foi possível verificar/criar membros/{uid}:", err.message);
+    return null;
+  }
+}
 
 // Formatação e conversão de telefone para padrão E.164 (+5561...)
 export function formatToE164(rawPhone) {
@@ -258,7 +350,8 @@ export function initHeaderAuthSync() {
   const accountSlot = document.getElementById("site-header-account");
   const bellContainer = document.getElementById("header-bell-container");
   const authSlot = document.getElementById("header-auth-slot");
-  const mobileAccountSlot = document.getElementById("site-mobile-account-slot");
+  const mobileAccountSlot = document.getElementById("site-mobile-account-slot") || document.getElementById("mobile-menu-account") || document.querySelector(".mobile-menu__account");
+  const targetDesktopSlot = authSlot || accountSlot;
 
   onAuthStateChanged(auth, async (user) => {
     if (user) {
@@ -268,7 +361,7 @@ export function initHeaderAuthSync() {
       // Busca dados adicionais do membro no Firestore (foto, role)
       let photoUrl = user.photoURL;
       let isAdmin = false;
-      let nome = user.displayName || user.email.split("@")[0];
+      let nome = user.displayName || (user.email ? user.email.split("@")[0] : "Membro");
 
       try {
         const idTokenResult = await user.getIdTokenResult();
@@ -281,14 +374,14 @@ export function initHeaderAuthSync() {
           if (mData.nome) nome = mData.nome;
         }
       } catch (err) {
-        console.warn("[Auth Sync] Leitura de membro secundária:", err);
+        console.warn("[Auth Sync] Leitura de membro secundária:", err.message);
       }
 
       const initialLetter = nome.charAt(0).toUpperCase();
 
-      if (authSlot) {
-        authSlot.innerHTML = `
-          <div class="site-header__user-menu">
+      if (targetDesktopSlot) {
+        targetDesktopSlot.innerHTML = `
+          <div class="site-header__user-menu" style="position: relative;">
             <button type="button" class="site-header__avatar-btn" id="header-avatar-btn" aria-expanded="false" aria-controls="header-user-dropdown" aria-label="Menu do usuário">
               ${photoUrl ? `<img src="${photoUrl}" alt="${nome}" class="site-header__avatar-img">` : `<span class="site-header__avatar-fallback">${initialLetter}</span>`}
             </button>
@@ -306,7 +399,24 @@ export function initHeaderAuthSync() {
           </div>
         `;
 
-        // Event listener do logout
+        // Toggle do dropdown do avatar
+        const avatarBtn = targetDesktopSlot.querySelector("#header-avatar-btn");
+        const dropdown = targetDesktopSlot.querySelector("#header-user-dropdown");
+        if (avatarBtn && dropdown) {
+          avatarBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const isOpen = dropdown.classList.toggle("show");
+            avatarBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+            dropdown.setAttribute("aria-hidden", isOpen ? "false" : "true");
+          });
+          document.addEventListener("click", () => {
+            dropdown.classList.remove("show");
+            avatarBtn.setAttribute("aria-expanded", "false");
+            dropdown.setAttribute("aria-hidden", "true");
+          });
+        }
+
+        // Event listener do logout desktop
         const logoutBtn = document.getElementById("btn-logout-firebase");
         if (logoutBtn) {
           logoutBtn.addEventListener("click", async () => {
@@ -318,9 +428,9 @@ export function initHeaderAuthSync() {
 
       if (mobileAccountSlot) {
         mobileAccountSlot.innerHTML = `
-          <div class="site-header__mobile-user-box">
+          <div class="mobile-menu__user-box">
             <span>Olá, <strong>${nome}</strong></span>
-            <div class="site-header__mobile-user-links">
+            <div class="mobile-menu__user-links">
               <a href="${resolvePath('/perfil/')}">Meu Perfil</a>
               ${isAdmin ? `<a href="${resolvePath('/painel/')}">Painel Admin</a>` : ""}
               <a href="#" id="btn-mobile-logout" style="color: #FF5252;">Sair</a>
@@ -332,7 +442,7 @@ export function initHeaderAuthSync() {
           mobileLogout.addEventListener("click", async (e) => {
             e.preventDefault();
             await logoutMembro();
-            window.location.href = "/";
+            window.location.href = resolvePath("/");
           });
         }
       }
@@ -340,8 +450,8 @@ export function initHeaderAuthSync() {
       // Usuário deslogado
       if (bellContainer) bellContainer.style.display = "none";
 
-      if (authSlot) {
-        authSlot.innerHTML = `
+      if (targetDesktopSlot) {
+        targetDesktopSlot.innerHTML = `
           <div class="site-header__guest-links">
             <a href="${resolvePath('/entrar/')}" class="site-header__btn-login">Entrar</a>
             <a href="${resolvePath('/cadastro/')}" class="site-header__btn-register">Cadastrar</a>
@@ -351,7 +461,7 @@ export function initHeaderAuthSync() {
 
       if (mobileAccountSlot) {
         mobileAccountSlot.innerHTML = `
-          <div class="site-header__mobile-auth-grid">
+          <div class="mobile-menu__auth-grid">
             <a href="${resolvePath('/entrar/')}" class="btn btn-outline-gold" style="width: 100%; text-align: center;">Entrar</a>
             <a href="${resolvePath('/cadastro/')}" class="btn btn-gold" style="width: 100%; text-align: center;">Cadastrar</a>
           </div>

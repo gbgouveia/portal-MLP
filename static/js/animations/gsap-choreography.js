@@ -64,27 +64,24 @@ document.addEventListener('DOMContentLoaded', () => {
       );
     }
 
-    // ScrollTrigger para revelação de marcos históricos caso ScrollTrigger esteja presente
-    if (typeof ScrollTrigger !== 'undefined') {
+    // ScrollTrigger para revelação suave dos marcos históricos (sem nunca ocultar texto)
+    if (typeof ScrollTrigger !== 'undefined' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       gsap.registerPlugin(ScrollTrigger);
 
       const timelineItems = document.querySelectorAll('.timeline-item');
       timelineItems.forEach((item) => {
-        gsap.fromTo(
-          item,
-          { opacity: 0, y: 30 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: item,
-              start: 'top 85%',
-              toggleActions: 'play none none none'
-            }
+        // Assegura visibilidade plena garantida
+        gsap.set(item, { opacity: 1 });
+        gsap.from(item, {
+          y: 16,
+          duration: 0.5,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: item,
+            start: 'top 95%',
+            once: true
           }
-        );
+        });
       });
     }
   }

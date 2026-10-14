@@ -239,3 +239,17 @@ def avisos_view(request):
     """
     return render(request, 'public/avisos.html')
 
+
+def custom_404_view(request, exception=None):
+    """
+    Renderizador editorial para erro 404 (página não encontrada).
+    """
+    return render(request, '404.html', status=404)
+
+
+def custom_500_view(request):
+    """
+    Renderizador editorial para erro 500 (instabilidade temporária no servidor).
+    """
+    return render(request, '500.html', status=500)
+

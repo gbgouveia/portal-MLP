@@ -27,12 +27,12 @@
 </div>
 
 <!-- 3. Eixo Narrativo: O Legado Pastoral que Atravessa Gerações -->
-<section id="ministerio" class="section-editorial bg-ivory-warm">
-  <div class="container">
-    <div class="section-header-editorial">
-      <span class="badge-editorial section-badge">Eixo Narrativo Central</span>
-      <h2 class="section-title">O Legado do Pastor Leonel</h2>
-      <p class="section-subtitle">
+<!-- 3. Eixo Narrativo: O Legado Pastoral que Atravessa Gerações -->
+<section id="ministerio" class="section-editorial section-legacy bg-ivory-warm">
+  <div class="legacy-container">
+    <div class="legacy-section-header">
+      <h2 class="legacy-main-title">O Legado do Pastor Leonel</h2>
+      <p class="legacy-intro-subtitle">
         Mais do que memórias do passado, a fidelidade ao Evangelho e o zelo pastoral deixados pelo fundador continuam a inspirar e nortear o presente da nossa comunidade.
       </p>
     </div>
@@ -47,33 +47,67 @@
         </p>
         {% if pastoral.core_values %}
           <div class="core-values-box">
-            <strong class="core-values-label">
-              Valores Pastorais Fundamentais
-            </strong>
-            <p class="core-values-text">
-              {{ pastoral.core_values }}
-            </p>
+            <div class="core-values-header">
+              <strong class="core-values-label">
+                Valores Pastorais Fundamentais
+              </strong>
+              <span class="badge-unconfirmed">A confirmar</span>
+            </div>
+            <ol class="core-values-list">
+              <li class="core-value-item">
+                <span class="core-value-num" aria-hidden="true">01</span>
+                <span class="core-value-text">Fidelidade irrestrita à Palavra de Deus.</span>
+              </li>
+              <li class="core-value-item">
+                <span class="core-value-num" aria-hidden="true">02</span>
+                <span class="core-value-text">Oração perseverante e dependência do Espírito Santo.</span>
+              </li>
+              <li class="core-value-item">
+                <span class="core-value-num" aria-hidden="true">03</span>
+                <span class="core-value-text">Pastoreio compassivo, próximo e acolhedor.</span>
+              </li>
+              <li class="core-value-item">
+                <span class="core-value-num" aria-hidden="true">04</span>
+                <span class="core-value-text">Continuidade ministerial e zelo pelas novas gerações.</span>
+              </li>
+            </ol>
           </div>
         {% endif %}
-        <a href="{% url 'public:legacy' %}" class="btn btn-outline">
-          Acessar Biografia Completa e Linha do Tempo &rarr;
-        </a>
+        <div class="legacy-actions-group">
+          <a href="#cultos" class="btn btn-primary legacy-btn-schedule">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            Horários dos Cultos & Como Chegar
+          </a>
+          <a href="{% url 'public:legacy' %}" class="btn btn-outline legacy-btn-bio">
+            Acessar Biografia Completa e Linha do Tempo &rarr;
+          </a>
+        </div>
       </div>
 
       <!-- Marcos em Destaque da Linha do Tempo -->
       <div class="milestones-highlight-card">
-        <h4 class="font-display milestones-card-title">
-          Marcos Históricos Confirmados
-        </h4>
+        <div class="milestones-card-header">
+          <h4 class="font-display milestones-card-title">
+            Marcos Históricos
+          </h4>
+        </div>
         <div class="milestones-list">
           {% for m in milestones %}
-            <div class="milestone-item">
-              <span class="badge-editorial milestone-date">{{ m.formatted_date }}</span>
-              <div class="milestone-content">
-                <strong class="milestone-title">{{ m.title }}</strong>
-                <p class="milestone-summary">{{ m.summary|truncatewords:20 }}</p>
+            <article class="milestone-item">
+              <div class="milestone-date-wrap">
+                <span class="milestone-period">{{ m.formatted_date }}</span>
+                {% if m.year >= 1980 and m.year < 2020 %}
+                  <span class="badge-unconfirmed">A confirmar</span>
+                {% endif %}
               </div>
-            </div>
+              <div class="milestone-content">
+                <h5 class="milestone-title">{{ m.title }}</h5>
+                <p class="milestone-summary">{{ m.summary }}</p>
+              </div>
+            </article>
           {% endfor %}
         </div>
       </div>
@@ -85,7 +119,6 @@
 <section id="cultos" class="section-editorial">
   <div class="container">
     <div class="section-header-editorial">
-      <span class="badge-editorial section-badge">Vida Comunitária</span>
       <h2 class="section-title">Encontros de Fé e Adoração</h2>
       <p class="section-subtitle">
         Venha celebrar conosco. Nossos cultos são abertos a todos que buscam a Deus e o ensino fiel das Escrituras.
@@ -124,7 +157,6 @@
 <section id="avisos" class="section-editorial bg-ivory-warm">
   <div class="container">
     <div class="section-header-editorial">
-      <span class="badge-editorial section-badge">Comunicação Oficial</span>
       <h2 class="section-title">Quadro de Avisos</h2>
       <p class="section-subtitle">
         Comunicados oficiais, eventos e informativos do Ministério Luz da Palavra.
@@ -133,18 +165,18 @@
 
     <div id="home-avisos-container" class="avisos-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
       <!-- Avisos carregados dinamicamente via Firestore / fallback local -->
-      <div class="aviso-card aviso-card--destaque" style="background: #FFF; border: 1px solid rgba(191, 135, 31, 0.3); border-radius: 8px; padding: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 4px solid #BF871F;">
+      <div class="aviso-card aviso-card--destaque" style="background: var(--color-mlp-surface); border: 1px solid var(--color-mlp-border); border-radius: var(--mlp-radius-md); padding: 1.75rem; box-shadow: var(--shadow-subtle);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-          <span class="badge-editorial" style="background: rgba(191, 135, 31, 0.15); color: #8C4303; border-color: #BF871F;">Geral</span>
-          <span style="font-size: 0.78rem; color: #8C4303; font-weight: 600;">Fixado</span>
+          <span class="badge-editorial" style="background: rgba(191, 135, 31, 0.12); color: var(--color-mlp-brown-dark); border-color: rgba(191, 135, 31, 0.35);">Geral</span>
+          <span style="font-size: 0.78rem; color: var(--color-mlp-brown-dark); font-weight: 600;">Fixado</span>
         </div>
-        <h3 class="font-display" style="font-size: 1.2rem; color: #100904; margin-bottom: 0.5rem;">Bem-vindo ao Portal Oficial MLP</h3>
-        <p style="font-size: 0.92rem; color: #555; line-height: 1.6; margin-bottom: 1rem;">
+        <h3 class="font-display" style="font-size: 1.25rem; color: var(--color-mlp-brown-dark); margin-bottom: 0.5rem;">Bem-vindo ao Portal Oficial MLP</h3>
+        <p style="font-size: 0.92rem; color: var(--color-mlp-text); line-height: 1.6; margin-bottom: 1rem;">
           Fique por dentro das programações dos cultos, transmissões ao vivo e do acervo documental do legado pastoral.
         </p>
-        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: #888;">
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--color-mlp-text-muted);">
           <span>Secretaria MLP</span>
-          <a href="/avisos/" style="color: #BF871F; text-decoration: none; font-weight: 600;">Ver todos &rarr;</a>
+          <a href="/avisos/" style="color: var(--color-mlp-gold-text); text-decoration: none; font-weight: 600;">Ver todos &rarr;</a>
         </div>
       </div>
     </div>
@@ -155,7 +187,6 @@
 <section id="mensagens" class="section-editorial bg-wine-deep">
   <div class="container">
     <div class="section-header-editorial">
-      <span class="badge-editorial badge-dark section-badge">Canal Oficial</span>
       <h2 class="section-title text-ivory-warm">Palavra & Transmissões</h2>
       <p class="section-subtitle text-gray-subtle">
         Acesse os estudos bíblicos, ministrações gravadas e as transmissões das celebrações.
@@ -163,7 +194,7 @@
     </div>
 
     <!-- Bloco de Transmissão Principal (Ao Vivo ou Última Transmissão Oficial) -->
-    <div id="transmissoes" class="featured-transmission-box" style="margin-bottom: var(--space-3xl); background: rgba(16, 9, 4, 0.75); border: 1px solid rgba(242, 209, 109, 0.3); border-radius: 8px; padding: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+    <div id="transmissoes" class="featured-transmission-box" style="margin-bottom: var(--space-3xl); background: rgba(16, 9, 4, 0.75); border: 1px solid rgba(242, 209, 109, 0.3); border-radius: var(--mlp-radius-md); padding: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
       <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem;">
         <div style="display: flex; align-items: center; gap: 0.75rem;">
           <div id="live-status-indicator" style="display: {% if live_broadcast %}flex{% else %}none{% endif %}; align-items: center; gap: 0.5rem;">
@@ -234,7 +265,6 @@
 <section id="galeria" class="section-editorial">
   <div class="container">
     <div class="section-header-editorial">
-      <span class="badge-editorial section-badge">Patrimônio Visual</span>
       <h2 class="section-title">Memória em Imagens</h2>
       <p class="section-subtitle">
         Fotografias históricas e celebrações que documentam a caminhada da nossa congregação.

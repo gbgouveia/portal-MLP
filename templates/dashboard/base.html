@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Painel MLP{% endblock %} — Ministério Luz da Palavra</title>
+  <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
   <link rel="stylesheet" href="{% static 'css/design-system.css' %}">
   <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
   {% block extra_css %}{% endblock %}
@@ -113,5 +114,28 @@
       </main>
     </div>
   </div>
+
+  <!-- Proteção Client-Side de Acesso Administrativo com Custom Claims Firebase -->
+  <script type="module">
+    import { auth } from "{% static 'js/firebase/config.js' %}";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    if (auth) {
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          try {
+            const idTokenResult = await user.getIdTokenResult();
+            if (idTokenResult.claims.admin !== true) {
+              console.warn("[Segurança] Usuário sem claim { admin: true }. Acesso ao painel negado.");
+              alert("Acesso restrito. Sua conta não possui privilégios de administrador.");
+              window.location.href = "/";
+            }
+          } catch (e) {
+            console.error("Erro ao validar claims no painel:", e);
+          }
+        }
+      });
+    }
+  </script>
 </body>
 </html>

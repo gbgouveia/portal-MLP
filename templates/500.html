@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Instabilidade Temporária — Ministério Luz da Palavra{% endblock %}
+
+{% block content %}
+<section class="section-editorial" style="min-height: 70vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 30%, rgba(242, 209, 109, 0.08) 0%, rgba(8, 6, 5, 0.02) 70%, transparent 100%);">
+  <div class="container container-narrow" style="text-align: center; padding-top: var(--space-2xl); padding-bottom: var(--space-2xl);">
+    
+    <!-- Símbolo de Manutenção / Alerta Sutil -->
+    <div style="margin-bottom: var(--space-lg); display: inline-flex; align-items: center; justify-content: center; width: 72px; height: 72px; border-radius: 50%; background: rgba(140, 67, 3, 0.1); border: 1px solid rgba(140, 67, 3, 0.3);">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-mlp-brown-dark);">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+        <line x1="12" y1="9" x2="12" y2="13"></line>
+        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+      </svg>
+    </div>
+
+    <span style="display: block; font-family: var(--font-sans); font-size: 0.85rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--color-mlp-gold-text); margin-bottom: 0.5rem;">
+      Erro 500
+    </span>
+
+    <h1 class="font-display" style="font-size: clamp(2rem, 4vw, 2.75rem); color: var(--color-mlp-brown-dark); margin-bottom: var(--space-md); line-height: 1.2;">
+      Instabilidade Temporária no Servidor
+    </h1>
+
+    <p style="font-size: 1.05rem; color: var(--color-mlp-text-muted); line-height: 1.65; max-width: 560px; margin: 0 auto var(--space-xl);">
+      Ocorreu uma falha inesperada no processamento da solicitação. A equipe técnica já foi notificada para restaurar o serviço o mais breve possível.
+    </p>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; align-items: center; margin-bottom: var(--space-2xl);">
+      <button onclick="window.location.reload();" class="btn btn-primary" type="button">
+        Tentar Novamente
+      </button>
+      <a href="{% url 'public:home' %}" class="btn btn-outline">
+        Página Inicial
+      </a>
+      <a href="{% url 'public:contact' %}" class="btn btn-outline">
+        Informar Secretaria
+      </a>
+    </div>
+
+    <!-- Canal Oficial Alternativo -->
+    <div style="padding-top: var(--space-xl); border-top: 1px solid var(--color-mlp-border); max-width: 500px; margin: 0 auto;">
+      <p style="font-size: 0.88rem; color: var(--color-mlp-text-muted);">
+        Enquanto isso, você pode acompanhar nossas ministrações diretamente no canal oficial:
+        <br>
+        <a href="https://www.youtube.com/@MLPBRASILIA-DF" target="_blank" rel="noopener noreferrer" style="color: var(--color-mlp-gold-text); font-weight: 600; text-decoration: none;">
+          YouTube: @MLPBRASILIA-DF &rarr;
+        </a>
+      </p>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

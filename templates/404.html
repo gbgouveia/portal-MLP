@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Página Não Encontrada — Ministério Luz da Palavra{% endblock %}
+
+{% block content %}
+<section class="section-editorial" style="min-height: 70vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 30%, rgba(242, 209, 109, 0.08) 0%, rgba(8, 6, 5, 0.02) 70%, transparent 100%);">
+  <div class="container container-narrow" style="text-align: center; padding-top: var(--space-2xl); padding-bottom: var(--space-2xl);">
+    
+    <!-- Símbolo de Luz / Cruz Sutil -->
+    <div style="margin-bottom: var(--space-lg); display: inline-flex; align-items: center; justify-content: center; width: 72px; height: 72px; border-radius: 50%; background: rgba(191, 135, 31, 0.1); border: 1px solid rgba(191, 135, 31, 0.3);">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-mlp-gold);">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+    </div>
+
+    <span style="display: block; font-family: var(--font-sans); font-size: 0.85rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--color-mlp-gold-text); margin-bottom: 0.5rem;">
+      Erro 404
+    </span>
+
+    <h1 class="font-display" style="font-size: clamp(2rem, 4vw, 2.75rem); color: var(--color-mlp-brown-dark); margin-bottom: var(--space-md); line-height: 1.2;">
+      Página Não Encontrada
+    </h1>
+
+    <p style="font-size: 1.05rem; color: var(--color-mlp-text-muted); line-height: 1.65; max-width: 540px; margin: 0 auto var(--space-xl);">
+      O conteúdo que você procurava pode ter sido movido, renomeado ou não está mais disponível no portal institucional.
+    </p>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; align-items: center; margin-bottom: var(--space-2xl);">
+      <a href="{% url 'public:home' %}" class="btn btn-primary">
+        &larr; Voltar para a Página Inicial
+      </a>
+      <a href="{% url 'public:contact' %}" class="btn btn-outline">
+        Falar com a Secretaria
+      </a>
+    </div>
+
+    <!-- Navegação Auxiliar Recomendada -->
+    <div style="padding-top: var(--space-xl); border-top: 1px solid var(--color-mlp-border); max-width: 500px; margin: 0 auto;">
+      <span style="font-size: 0.82rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-mlp-text-muted); display: block; margin-bottom: 0.75rem;">
+        Páginas mais acessadas
+      </span>
+      <div style="display: flex; flex-wrap: wrap; gap: 1.25rem; justify-content: center; font-size: 0.92rem;">
+        <a href="{% url 'public:home' %}#cultos" style="color: var(--color-mlp-brown-dark); text-decoration: none; font-weight: 500;">Cultos e Horários</a>
+        <span style="color: var(--color-mlp-border);">&bull;</span>
+        <a href="{% url 'public:media' %}" style="color: var(--color-mlp-brown-dark); text-decoration: none; font-weight: 500;">Transmissões e Vídeos</a>
+        <span style="color: var(--color-mlp-border);">&bull;</span>
+        <a href="{% url 'public:legacy' %}" style="color: var(--color-mlp-brown-dark); text-decoration: none; font-weight: 500;">Legado Pastoral</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

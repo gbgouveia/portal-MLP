@@ -24,6 +24,10 @@ urlpatterns = [
     path('', include('apps.core.urls')),
 ]
 
+# Handlers Globais de Erro Editorial (404 e 500)
+handler404 = 'apps.core.views.custom_404_view'
+handler500 = 'apps.core.views.custom_500_view'
+
 # Servir mídias e estáticos em desenvolvimento local
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

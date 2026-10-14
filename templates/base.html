@@ -8,16 +8,29 @@
   
   <meta name="description" content="{% block meta_description %}{{ institutional.tagline|default:'Uma história construída pela fé. Um legado que atravessa gerações. Um ministério que continua.' }}{% endblock %}">
   <meta name="author" content="Ministério Luz da Palavra">
+  <meta name="theme-color" content="#080605">
+  
+  <!-- Favicon Oficial -->
+  <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
+  <link rel="apple-touch-icon" href="{% static 'images/logo-mlp.png' %}">
   
   <!-- Open Graph / Redes Sociais -->
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ministério Luz da Palavra">
   <meta property="og:title" content="{% block og_title %}{{ institutional.name|default:'Ministério Luz da Palavra' }}{% endblock %}">
-  <meta property="og:description" content="{% block og_description %}{{ institutional.tagline }}{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}{{ institutional.tagline|default:'Uma história construída pela fé. Um legado que atravessa gerações.' }}{% endblock %}">
+  <meta property="og:image" content="{% block og_image %}{% static 'images/logo-mlp.png' %}{% endblock %}">
   
-  <!-- Favicon e Fontes -->
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{% block twitter_title %}{{ institutional.name|default:'Ministério Luz da Palavra' }}{% endblock %}">
+  <meta name="twitter:description" content="{% block twitter_description %}{{ institutional.tagline|default:'Uma história construída pela fé. Um legado que atravessa gerações.' }}{% endblock %}">
+  <meta name="twitter:image" content="{% block twitter_image %}{% static 'images/logo-mlp.png' %}{% endblock %}">
+  
+  <!-- Fontes Oficiais do Ministério -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
   
   <!-- Folhas de Estilo -->
   <link rel="stylesheet" href="{% static 'css/design-system.css' %}">
@@ -25,6 +38,9 @@
   {% block extra_css %}{% endblock %}
 </head>
 <body>
+  <!-- Link Acessível de Pulo para o Conteúdo Principal -->
+  <a href="#main-content" class="skip-link">Pular para o conteúdo principal</a>
+
   <!-- Cabeçalho Institucional -->
   {% include 'components/header.html' %}
 

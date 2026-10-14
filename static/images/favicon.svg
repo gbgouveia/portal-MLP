@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="14" fill="#080605"/>
+  <rect x="2" y="2" width="60" height="60" rx="12" fill="none" stroke="#BF871F" stroke-width="2" stroke-opacity="0.6"/>
+  <!-- Ray of light / Cross -->
+  <path d="M32 10 L32 54" stroke="url(#goldGradient)" stroke-width="4" stroke-linecap="round"/>
+  <path d="M18 24 L46 24" stroke="url(#goldGradient)" stroke-width="4" stroke-linecap="round"/>
+  <!-- Open Bible base -->
+  <path d="M16 42 Q32 38 32 46 Q32 38 48 42 L48 50 Q32 46 32 54 Q32 46 16 50 Z" fill="#BF871F" fill-opacity="0.25" stroke="#F2D16D" stroke-width="2" stroke-linejoin="round"/>
+  <!-- Central radiance gem -->
+  <circle cx="32" cy="24" r="3.5" fill="#FFF6D6"/>
+  <defs>
+    <linearGradient id="goldGradient" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFF6D6"/>
+      <stop offset="40%" stop-color="#F2D16D"/>
+      <stop offset="80%" stop-color="#BF871F"/>
+      <stop offset="100%" stop-color="#8C4303"/>
+    </linearGradient>
+  </defs>
+</svg>

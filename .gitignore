@@ -20,6 +20,14 @@ dist/
 .env
 .env.local
 functions/.env
+*serviceAccount*.json
+*firebase-adminsdk*.json
+service-account*.json
+*service-account*.json
+*credential*.json
+serviceAccountKey*.json
+*.key.json
+*.credentials.json
 
 # OS / Editor
 .DS_Store

@@ -6,7 +6,6 @@
 {% block content %}
 <section class="hero-editorial" style="padding: var(--space-3xl) 0 var(--space-2xl);">
   <div class="container container-narrow" style="text-align: center;">
-    <span class="badge-editorial badge-dark" style="margin-bottom: 1rem;">Patrimônio Visual & Memória</span>
     <h1 class="hero-title" style="font-size: 2.8rem; margin-bottom: 1rem;">
       Acervo Fotográfico
     </h1>
@@ -36,7 +35,6 @@
     {% if historical_albums %}
       <div style="margin-bottom: var(--space-4xl);">
         <div class="section-header-editorial" style="text-align: left; margin-bottom: var(--space-xl);">
-          <span class="badge-editorial section-badge">Preservação & Memória</span>
           <h2 class="section-title" style="font-size: 1.8rem;">Acervo Histórico (Décadas Passadas)</h2>
         </div>
 
@@ -47,7 +45,7 @@
                 {% if album.cover_image %}
                   <img src="{{ album.cover_image.url }}" alt="{{ album.title }}" loading="lazy">
                 {% else %}
-                  <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #35231F; color: var(--color-gold);">
+                  <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #35231F; color: var(--color-gold); padding: 1rem; text-align: center;">
                     <span>Acervo Memorial MLP</span>
                   </div>
                 {% endif %}
@@ -75,7 +73,6 @@
     <!-- Álbuns Contemporâneos e Gerais -->
     <div>
       <div class="section-header-editorial" style="text-align: left; margin-bottom: var(--space-xl);">
-        <span class="badge-editorial section-badge">Vida Congregacional</span>
         <h2 class="section-title" style="font-size: 1.8rem;">Celebrações e Encontros</h2>
       </div>
 
@@ -86,7 +83,7 @@
               {% if album.cover_image %}
                 <img src="{{ album.cover_image.url }}" alt="{{ album.title }}" loading="lazy">
               {% else %}
-                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #35231F; color: var(--color-gold);">
+                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #35231F; color: var(--color-gold); padding: 1rem; text-align: center;">
                   <span>Celebração MLP</span>
                 </div>
               {% endif %}
